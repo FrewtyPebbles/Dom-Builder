@@ -17,3 +17,9 @@
 #dev-body * {
     padding: 5px;
 }
+#dev-bar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+}

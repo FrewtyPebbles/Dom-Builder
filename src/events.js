@@ -19,7 +19,7 @@ function deselect() {
             element?.classList.remove('dev-selected')
         }
     })
-    selected_element.element.contentEditable = false
+    change_content_editable(selected_element.element, false)
     selected_element.editing = false
     selected_element.selected = false
 }
@@ -33,24 +33,24 @@ function select_element(over_element) {
     selected_element.element?.classList.add('dev-selected')
 }
 
-// Mouse Click
-document.addEventListener('click', e => {
-    // let over_element = document.elementFromPoint(e.clientX, e.clientY)
-    // if (over_element.getAttribute('contenteditable') === true) return;
-    // if (!DEV_BODY.contains(over_element)) return;
-    // // if (over_element.classList.contains('dev-selected')) {
-    // //     // guard to deselect if already selected
-    // //     deselect()
-    // //     return
-    // // }
-    // select_element(over_element)
-})
+function all_descendants(node, callback) {
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var child = node.childNodes[i];
+      all_descendants(child, callback);
+      callback(child);
+    }
+}
+
+function change_content_editable(node, editable) {
+    all_descendants(node, () => node.contentEditable = editable)
+}
 
 // Mouse Down - Get start position of element drag
 document.addEventListener('mousedown', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
     if (over_element.getAttribute('contenteditable') === true) return;
     if (!DEV_BODY.contains(over_element)) return;
+    if (!selected_element.editing.contains(over_element)) return;
     select_element(over_element)
     if (selected_element.editing === true) return;
     selected_element.drag_start_element = document.elementFromPoint(e.clientX, e.clientY)
@@ -62,12 +62,12 @@ document.addEventListener('dblclick', e => {
     if (!DEV_BODY.contains(over_element)) return;
     if (over_element.classList.contains('dev-selected')) {
         // guard to deselect if already selected
-        selected_element.element.contentEditable = true
+        change_content_editable(selected_element.element, true)
         selected_element.editing = true
         return
     }
     select_element(over_element)
-    selected_element.element.contentEditable = true
+    change_content_editable(selected_element.element, true)
     selected_element.editing = true
 })
 
