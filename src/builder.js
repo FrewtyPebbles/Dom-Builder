@@ -6,7 +6,15 @@ import {
     DEV_BAR_BUTTON_ITALIC,
     DEV_BAR_BUTTON_UNDERLINE,
     DEV_BODY,
-    DEV_BAR_BUTTON_EXPORT
+    DEV_BAR_BUTTON_EXPORT,
+    DEV_SCRIPT,
+    DEV_SCRIPT_CLOSE,
+    DEV_SCRIPT_EDITOR,
+    DEV_STYLE,
+    DEV_STYLE_CLOSE,
+    DEV_STYLE_EDITOR,
+    DEV_BAR_BUTTON_CSS,
+    DEV_BAR_BUTTON_JS
 } from "./dev_bar.js";
 
 import { selected_element } from "./events.js";
@@ -26,7 +34,9 @@ DEV_BAR_BUTTON_DELETE.addEventListener("click", e => {
 })
 
 DEV_BAR_BUTTON_EXPORT.addEventListener("click", e => {
-    const body = DEV_BODY.innerHTML;
+    let body = DEV_BODY.innerHTML;
+    let script = DEV_SCRIPT_EDITOR.value
+    let css = DEV_STYLE_EDITOR.innerText
     let doc = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -34,10 +44,14 @@ DEV_BAR_BUTTON_EXPORT.addEventListener("click", e => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>HTML 5 Boilerplate</title>
-        <link rel="stylesheet" href="style.css">
       </head>
       <body>
-        <script src="index.js"></script>
+        <script>
+            ${script}
+        </script>
+        <style>
+            ${css}
+        </style>
         ${body}
       </body>
     </html>`;
@@ -61,3 +75,23 @@ function download_file(data, filename, type) {
         }, 0); 
     }
 }
+
+// Js Handler
+DEV_BAR_BUTTON_JS.addEventListener("click", e => {
+    DEV_SCRIPT.style.display = "block";
+})
+
+// css Handler
+DEV_BAR_BUTTON_CSS.addEventListener("click", e => {
+    DEV_STYLE.style.display = "block";
+})
+
+// Js CLOSE Handler
+DEV_SCRIPT_CLOSE.addEventListener("click", e => {
+    DEV_SCRIPT.style.display = "none";
+})
+
+// css CLOSE Handler
+DEV_STYLE_CLOSE.addEventListener("click", e => {
+    DEV_STYLE.style.display = "none";
+})

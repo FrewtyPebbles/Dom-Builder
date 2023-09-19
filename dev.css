@@ -42,3 +42,31 @@
     left: 0;
     right: 0;
 }
+/* CODE EDITORS */
+.dev-editor {
+    display: none;
+    overflow-y: auto;
+    overflow-x: none;
+    position: absolute;
+    top: 10vh;
+    left: 25vw;
+    height:80vh;
+    width: 50vw;
+    background-color: black;
+}
+.dev-editor > pre {
+    height: 100%;
+}
+.dev-editor-input {
+    display: block;
+    background-color: white;
+    color: black;
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+}
+#dev-style-close, #dev-script-close {
+    position: sticky;
+    top: 0;
+    left: 0;
+}

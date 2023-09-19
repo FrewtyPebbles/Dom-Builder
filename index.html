@@ -12,6 +12,11 @@
     <nav id="dev-bar">
         <select name="Element" id="dev-bar-element">
             <option selected disabled>Elements</option>
+            <option value="h1">h1</option>
+            <option value="h2">h2</option>
+            <option value="h3">h3</option>
+            <option value="h4">h4</option>
+            <option value="p">p</option>
             <option value="div">div</option>
             <option value="ul">ul</option>
             <option value="ol">ol</option>
@@ -21,21 +26,26 @@
         <Button id="dev-bar-button-bold">Bold</Button>
         <Button id="dev-bar-button-underline">Underline</Button>
         <Button id="dev-bar-button-delete">Delete</Button>
+        <Button id="dev-bar-button-css">css</Button>
+        <Button id="dev-bar-button-js">js</Button>
         <Button id="dev-bar-button-export">EXPORT</Button>
     </nav>
     <div id="dev-body">
-        <div>
-            Lorem, ban amet consectetur adipisicing elit. Esse beatae a rerum, minima nemo pariatur maiores? Veritatis dignissimos facere iste, nulla dolore non repellat quidem esse. Distinctio delectus provident esse.
-            Iure quam possimus impedit ad debitis laboriosam facere sequi distinctio, sit rerum fugit qui enim non adipisci a laudantium cumque modi voluptates deserunt numquam! Architecto officia doloremque debitis. Dolores, dolorum.
-            Eius officia, culpa beatae nihil veniam corporis porro reiciendis commodi odio minus hic voluptate deleniti? Itaque nesciunt modi, beatae rem non reprehenderit velit eligendi corrupti, est unde quasi voluptates aperiam!
-            Tenetur delectus aut dolores doloribus natus fugiat nobis ea? Quam at, possimus error dolorem autem obcaecati, culpa odio, dolor nobis voluptate suscipit dicta ipsum quibusdam libero tenetur est laborum nihil!
-            Error, minus? Nihil, minima non reiciendis iste unde quia suscipit accusantium debitis dolorum recusandae accusamus tempore alias vero iusto eveniet eaque officiis ullam pariatur culpa impedit aspernatur inventore magnam! Inventore?
-        </div>
-        <div>
-            <div>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum nisi labore eligendi atque? Quas, mollitia provident quidem laborum amet maxime. Quia possimus rerum quos consequuntur culpa, voluptates laudantium ullam veritatis.</div>
-            <div>Hic repellendus quaerat, quam est dolorum libero minus ex in facere quisquam quasi quia asperiores consequuntur perspiciatis eos adipisci exercitationem ipsam voluptatem iste! Nam, culpa nisi blanditiis sit provident sed!</div>
-            <div>Unde asperiores nisi cupiditate delectus autem accusamus odit, earum at soluta odio, ut sed vitae non hic voluptatem mollitia rem aliquam nostrum commodi. Obcaecati porro, necessitatibus omnis officia at pariatur.</div>
-        </div>
+        
+    </div>
+    <div id="dev-style" class="dev-editor">
+        <button id="dev-style-close">X</button>
+        <pre>
+            <style id="dev-style-editor" class="dev-editor-input" contenteditable = "true">
+                /* type your css here: */
+            </style>
+        </pre>
+    </div>
+    <div id="dev-script" class="dev-editor">
+        <button id="dev-script-close">X</button>
+        <textarea id="dev-script-editor" class="dev-editor-input">
+            // type your javascript here:
+        </textarea>
     </div>
 </body>
 </html>
