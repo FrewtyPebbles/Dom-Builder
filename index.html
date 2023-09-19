@@ -6,19 +6,26 @@
     <title>Dom Builder</title>
     <link rel="stylesheet" href="dev.css">
     <script type="module" src="/src/events.js"></script>
+    <script type="module" src="/src/builder.js"></script>
 </head>
 <body>
     <nav id="dev-bar">
-        <select name="Element" id="dev-element">
+        <select name="Element" id="dev-bar-element">
+            <option selected disabled>Elements</option>
             <option value="div">div</option>
+            <option value="ul">ul</option>
+            <option value="ol">ol</option>
+            <option value="li">li</option>
         </select>
-        <Button>Italic</Button>
-        <Button>Bold</Button>
-        <Button>Underline</Button>
+        <Button id="dev-bar-button-italic">Italic</Button>
+        <Button id="dev-bar-button-bold">Bold</Button>
+        <Button id="dev-bar-button-underline">Underline</Button>
+        <Button id="dev-bar-button-delete">Delete</Button>
+        <Button id="dev-bar-button-export">EXPORT</Button>
     </nav>
     <div id="dev-body">
         <div>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse beatae a rerum, minima nemo pariatur maiores? Veritatis dignissimos facere iste, nulla dolore non repellat quidem esse. Distinctio delectus provident esse.
+            Lorem, ban amet consectetur adipisicing elit. Esse beatae a rerum, minima nemo pariatur maiores? Veritatis dignissimos facere iste, nulla dolore non repellat quidem esse. Distinctio delectus provident esse.
             Iure quam possimus impedit ad debitis laboriosam facere sequi distinctio, sit rerum fugit qui enim non adipisci a laudantium cumque modi voluptates deserunt numquam! Architecto officia doloremque debitis. Dolores, dolorum.
             Eius officia, culpa beatae nihil veniam corporis porro reiciendis commodi odio minus hic voluptate deleniti? Itaque nesciunt modi, beatae rem non reprehenderit velit eligendi corrupti, est unde quasi voluptates aperiam!
             Tenetur delectus aut dolores doloribus natus fugiat nobis ea? Quam at, possimus error dolorem autem obcaecati, culpa odio, dolor nobis voluptate suscipit dicta ipsum quibusdam libero tenetur est laborum nihil!

@@ -1,21 +1,40 @@
+/* SELECTED*/
+
 :is(.dev-selected, .dev-hover).dev-selected {
     border: rgba(0, 217, 255, 0.579) solid !important;
     user-select: none !important;
 }
 .dev-selected > * {
-    border: rgba(71, 87, 90, 0.435) dashed 1px;
+    border: rgba(71, 87, 90, 0.435) dashed 1px !important;
 }
 
-/* DEV HOVER */
-.dev-hover {
+/* HOVER */
+.dev-hover-center {
     border: rgba(230, 0, 255, 0.579) solid !important;
 }
-.dev-hover > * {
+.dev-hover-top {
+    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    border-top: rgba(230, 0, 255, 0.579) solid !important;
+}
+.dev-hover-bottom {
+    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    border-bottom: rgba(230, 0, 255, 0.579) solid !important;
+}
+.dev-hover-left {
+    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    border-left: rgba(230, 0, 255, 0.579) solid !important;
+}
+.dev-hover-right {
+    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    border-right: rgba(230, 0, 255, 0.579) solid !important;
+}
+:is(.dev-hover-center, .dev-hover-top, .dev-hover-left, .dev-hover-bottom, .dev-hover-right) > * {
     border: rgba(79, 71, 90, 0.435) dashed 1px;
 }
+/* ELEMENTS */
 
 #dev-body * {
-    padding: 5px;
+    padding: 10px;
 }
 #dev-bar {
     position: sticky;
