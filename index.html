@@ -9,43 +9,80 @@
     <script type="module" src="/src/builder.js"></script>
 </head>
 <body>
-    <nav id="dev-bar">
-        <select name="Element" id="dev-bar-element">
-            <option selected disabled>Elements</option>
-            <option value="h1">h1</option>
-            <option value="h2">h2</option>
-            <option value="h3">h3</option>
-            <option value="h4">h4</option>
-            <option value="p">p</option>
-            <option value="div">div</option>
-            <option value="ul">ul</option>
-            <option value="ol">ol</option>
-            <option value="li">li</option>
-        </select>
-        <Button id="dev-bar-button-italic">Italic</Button>
-        <Button id="dev-bar-button-bold">Bold</Button>
-        <Button id="dev-bar-button-underline">Underline</Button>
-        <Button id="dev-bar-button-delete">Delete</Button>
-        <Button id="dev-bar-button-css">css</Button>
-        <Button id="dev-bar-button-js">js</Button>
-        <Button id="dev-bar-button-export">EXPORT</Button>
-    </nav>
-    <div id="dev-body">
+    <div id="dev-root">
+        <nav id="dev-bar">
+            <select name="Element" id="dev-bar-element">
+                <option selected disabled>Elements</option>
+                <option value="h1">h1</option>
+                <option value="h2">h2</option>
+                <option value="h3">h3</option>
+                <option value="h4">h4</option>
+                <option value="p">p</option>
+                <option value="div">div</option>
+                <option value="ul">ul</option>
+                <option value="ol">ol</option>
+                <option value="li">li</option>
+            </select>
+            <Button id="dev-bar-button-properties">properties</Button>
+            <Button id="dev-bar-button-italic">Italic</Button>
+            <Button id="dev-bar-button-bold">Bold</Button>
+            <Button id="dev-bar-button-underline">Underline</Button>
+            <Button id="dev-bar-button-delete">Delete</Button>
+            <Button id="dev-bar-button-css">css</Button>
+            <Button id="dev-bar-button-js">js</Button>
+            <Button id="dev-bar-button-export">EXPORT</Button>
+            <input type="text" id="dev-bar-input-title" placeholder="Title">
+        </nav>
+        <div style="display: flex; height: 100%;">
+            <div id="dev-body">
+            
+            </div>
+            <div id="dev-properties">
+                <div class="dev-properties-title">
+                    <button id="dev-properties-close">X</button>
+                    <h3>Properties</h3>
+                </div>
+                <div>
+                    classes: <input type="text" placeholder="classes" id="dev-properties-classes">
+                </div>
+                <div>
+                    Id: <input type="text" placeholder="id" id="dev-properties-id">
+                </div>
+                <div id="dev-properties-settings-root">
         
+                </div>
+            </div>
+        </div>
     </div>
     <div id="dev-style" class="dev-editor">
-        <button id="dev-style-close">X</button>
-        <pre>
-            <style id="dev-style-editor" class="dev-editor-input" contenteditable = "true">
+        <div>
+            <h3>CSS</h3>
+            <button id="dev-style-close">X</button>
+        </div>
+        <pre class="dev-style-anim">
+            <textarea id="dev-style-editor-animation" class="dev-editor-input">
                 /* type your css here: */
-            </style>
+            </textarea>
+        </pre>
+        <pre class="dev-style-main">
+            <textarea id="dev-style-editor" class="dev-editor-input">
+                /* type your css here: */
+            </textarea>
         </pre>
     </div>
     <div id="dev-script" class="dev-editor">
-        <button id="dev-script-close">X</button>
-        <textarea id="dev-script-editor" class="dev-editor-input">
-            // type your javascript here:
-        </textarea>
+        <div>
+            <h3>Java Script</h3>
+            <button id="dev-script-close">X</button>
+        </div>
+        <pre>
+            <textarea id="dev-script-editor" class="dev-editor-input">
+                // type your javascript here:
+            </textarea>
+        </pre>
     </div>
+    <style id="dev-style-export">
+        /* type your css here: */
+    </style>
 </body>
 </html>

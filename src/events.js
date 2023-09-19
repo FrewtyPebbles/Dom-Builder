@@ -1,4 +1,5 @@
-import { DEV_BODY } from "./dev_bar.js"
+import { DEV_BODY, DEV_PROPERTIES_CLASSES, DEV_PROPERTIES_ID } from "./elements.js"
+import { array_remove_item } from "./utility.js"
 
 export var selected_element = {element:DEV_BODY, selected:false, editing:false, drag_start_element:DEV_BODY}
 
@@ -60,6 +61,11 @@ document.addEventListener('mousedown', e => {
     if (!DEV_BODY.contains(over_element)) return;
     if (selected_element.element.contains(over_element) && selected_element.editing === true) return;
     select_element(over_element)
+    DEV_PROPERTIES_CLASSES.value = array_remove_item(
+        [...selected_element.element.classList.values()],
+        ["dev-selected", "dev-hover-center","dev-hover-top","dev-hover-bottom","dev-hover-left","dev-hover-right"]
+    ).join(" ")
+    DEV_PROPERTIES_ID.value = selected_element.element.id
     if (selected_element.editing === true) return;
     selected_element.drag_start_element = document.elementFromPoint(e.clientX, e.clientY)
 })
@@ -67,7 +73,7 @@ document.addEventListener('mousedown', e => {
 // Mouse Double Click - edit content
 document.addEventListener('dblclick', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
-    if (!DEV_BODY.contains(over_element)) return;
+    if (!DEV_BODY.contains(over_element) || over_element === DEV_BODY) return;
     if (over_element.classList.contains('dev-selected')) {
         // guard to deselect if already selected
         change_content_editable(selected_element.element, true)
@@ -82,6 +88,7 @@ document.addEventListener('dblclick', e => {
 // Mouse Over
 document.addEventListener('mousemove', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
+    if (over_element === DEV_BODY) return;
     if (!DEV_BODY.contains(over_element)) {unhover(); return};
     if (over_element.classList.contains('dev-hover')) {
         // guard to deselect if already selected

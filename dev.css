@@ -32,9 +32,19 @@
     border: rgba(79, 71, 90, 0.435) dashed 1px;
 }
 /* ELEMENTS */
+#dev-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: -8px;
+}
+
+#dev-body {
+    flex-grow: 1;
+}
 
 #dev-body * {
-    padding: 10px;
+    padding: 3px;
 }
 #dev-bar {
     position: sticky;
@@ -45,28 +55,48 @@
 /* CODE EDITORS */
 .dev-editor {
     display: none;
-    overflow-y: auto;
+    overflow-y: none;
     overflow-x: none;
-    position: absolute;
+    position: fixed;
     top: 10vh;
     left: 25vw;
     height:80vh;
     width: 50vw;
     background-color: black;
 }
-.dev-editor > pre {
-    height: 100%;
+
+.dev-editor  pre {
+    height: 80%;
+    max-height: fit-content;
+    width: 100%;
+}
+pre.dev-style-anim {
+    height: 20%;
+}
+pre.dev-style-main {
+    height: 60%;
+}
+
+.dev-editor  h3 {
+    color: white;
+    display: inline-block;
+    margin: 0;
+}
+.dev-editor > div {
+    display:flex;
+    justify-content: space-between;
 }
 .dev-editor-input {
     display: block;
     background-color: white;
     color: black;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 22px);
     padding: 10px;
+    tab-size: 10px;
+    resize: none;
 }
-#dev-style-close, #dev-script-close {
-    position: sticky;
-    top: 0;
-    left: 0;
-}
+
+/* #dev-style-close, #dev-script-close {
+
+} */
