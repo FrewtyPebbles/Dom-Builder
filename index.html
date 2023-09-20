@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dom Builder</title>
     <link rel="stylesheet" href="dev.css">
-    <script type="module" src="/src/events.js"></script>
+    <script type="module" src="/src/inputs.js"></script>
     <script type="module" src="/src/builder.js"></script>
 </head>
 <body>
@@ -31,7 +31,7 @@
             <Button id="dev-bar-button-css">css</Button>
             <Button id="dev-bar-button-js">js</Button>
             <Button id="dev-bar-button-export">EXPORT</Button>
-            <input type="text" id="dev-bar-input-title" placeholder="Title">
+            <input class="dev-prevent-control" type="text" id="dev-bar-input-title" placeholder="Title">
         </nav>
         <div style="display: flex; height: 100%;">
             <div id="dev-body">
@@ -43,10 +43,10 @@
                     <h3>Properties</h3>
                 </div>
                 <div>
-                    classes: <input type="text" placeholder="classes" id="dev-properties-classes">
+                    classes: <input class="dev-prevent-control" type="text" placeholder="classes" id="dev-properties-classes">
                 </div>
                 <div>
-                    Id: <input type="text" placeholder="id" id="dev-properties-id">
+                    Id: <input class="dev-prevent-control" type="text" placeholder="id" id="dev-properties-id">
                 </div>
                 <div id="dev-properties-settings-root">
         
@@ -60,14 +60,10 @@
             <button id="dev-style-close">X</button>
         </div>
         <pre class="dev-style-anim">
-            <textarea id="dev-style-editor-animation" class="dev-editor-input">
-                /* type your css here: */
-            </textarea>
+            <textarea id="dev-style-editor-animation" class="dev-editor-input dev-prevent-control">/* Define any keyframe animations here: */</textarea>
         </pre>
         <pre class="dev-style-main">
-            <textarea id="dev-style-editor" class="dev-editor-input">
-                /* type your css here: */
-            </textarea>
+            <textarea id="dev-style-editor" class="dev-editor-input dev-prevent-control">/* type your css here: */</textarea>
         </pre>
     </div>
     <div id="dev-script" class="dev-editor">
@@ -76,7 +72,7 @@
             <button id="dev-script-close">X</button>
         </div>
         <pre>
-            <textarea id="dev-script-editor" class="dev-editor-input">
+            <textarea id="dev-script-editor" class="dev-editor-input dev-prevent-control">
                 // type your javascript here:
             </textarea>
         </pre>

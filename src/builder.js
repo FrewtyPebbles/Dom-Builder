@@ -24,11 +24,11 @@ import {
     DEV_BAR_INPUT_TITLE
 } from "./elements.js";
 
-import { selected_element } from "./events.js";
+import { selected_element } from "./globals.js";
 
-import { array_remove_item } from "./utility.js";
+import { array_remove_items } from "./utility.js";
 
-console.log("builder loaded");
+import * as Types from "./types.js"
 
 DEV_BAR_ELEMENT.addEventListener("click", e => {
     selected_element.element.appendChild(document.createElement(e.target.value))
@@ -69,6 +69,7 @@ DEV_BAR_BUTTON_EXPORT.addEventListener("click", e => {
     download_file(doc, "index.html", "text/plain");
 })
 
+/** @type {(data:string, filename:string, type:string) => void} */
 function download_file(data, filename, type) {
     var file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -107,8 +108,9 @@ DEV_STYLE_CLOSE.addEventListener("click", e => {
     DEV_STYLE.style.display = "none";
 })
 
-function style_input_handler(e) {
-    let re = /(([^\r\n,{}]+)(,(?=[^}]*{)|\s*{))/mg
+/** @type {(ev: Event) => void} */
+function style_input_handler(ev) {
+    let re = /(^([^\r\n,&{}]+)(,(?=[^}]*{)|\s*{))/mg
     let matches = String(DEV_STYLE_EDITOR.value).matchAll(re)
     let render_value = String(DEV_STYLE_EDITOR.value.replace(/\r\n/g, ""))
     let matcharray = []
@@ -131,9 +133,10 @@ DEV_STYLE_EDITOR.addEventListener("input", style_input_handler)
 
 DEV_STYLE_EDITOR_ANIMATION.addEventListener("input", style_input_handler)
 
-function tab_to_indent(e) {
-    if (e.key == 'Tab') {
-        e.preventDefault();
+/** @type {(ev: Event) => void} */
+function tab_to_indent(ev) {
+    if (ev.key == 'Tab') {
+        ev.preventDefault();
         var start = this.selectionStart;
         var end = this.selectionEnd;
 
@@ -159,6 +162,7 @@ DEV_PROPERTIES_CLASSES.addEventListener("input", e => {
     if (selected_element.element === DEV_BODY) return;
     selected_element.element.className = `dev-selected ${DEV_PROPERTIES_CLASSES.value}`
 })
+
 DEV_PROPERTIES_ID.addEventListener("input", e => {
     if (selected_element.element === DEV_BODY) return;
     selected_element.element.id = DEV_PROPERTIES_ID.value

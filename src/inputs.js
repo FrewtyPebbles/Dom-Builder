@@ -1,9 +1,7 @@
 import { DEV_BODY, DEV_PROPERTIES_CLASSES, DEV_PROPERTIES_ID } from "./elements.js"
-import { array_remove_item } from "./utility.js"
+import { array_remove_items } from "./utility.js"
 
-export var selected_element = {element:DEV_BODY, selected:false, editing:false, drag_start_element:DEV_BODY}
-
-export var hovered_element = DEV_BODY
+import { client_storage, selected_element } from "./globals.js"
 
 /// Mouse Event Handlers
 function unhover() {
@@ -14,8 +12,8 @@ function unhover() {
         "left",
         "right"
     ].forEach(pos => {
-        while (hovered_element?.classList.contains(`dev-hover-${pos}`)) {
-            hovered_element?.classList.remove(`dev-hover-${pos}`)
+        while (selected_element.hovered_element?.classList.contains(`dev-hover-${pos}`)) {
+            selected_element.hovered_element?.classList.remove(`dev-hover-${pos}`)
         }
     })
 }
@@ -28,10 +26,10 @@ function deselect() {
         }
     })
     change_content_editable(selected_element.element, false)
-    selected_element.editing = false
     selected_element.selected = false
 }
 
+/** @type {(over_element:HTMLElement) => void} */
 function select_element(over_element) {
      // guard: already selected
     if (over_element === selected_element.element) return;
@@ -41,6 +39,7 @@ function select_element(over_element) {
     selected_element.element?.classList.add('dev-selected')
 }
 
+/** @type {(node:HTMLElement | ChildNode, callback:(child: ChildNode) => string) => void} */
 function all_descendants(node, callback) {
     for (var i = 0; i < node.childNodes.length; i++) {
       var child = node.childNodes[i];
@@ -49,6 +48,7 @@ function all_descendants(node, callback) {
     }
 }
 
+/** @type {(node:HTMLElement, editable:boolean) => void} */
 function change_content_editable(node, editable) {
     node.contentEditable = editable
     all_descendants(node, () => node.contentEditable = editable)
@@ -59,14 +59,14 @@ document.addEventListener('mousedown', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
     if (over_element.getAttribute('contenteditable') === true) return;
     if (!DEV_BODY.contains(over_element)) return;
-    if (selected_element.element.contains(over_element) && selected_element.editing === true) return;
+    if (selected_element.element.contains(over_element) && selected_element.element.contentEditable === true) return;
     select_element(over_element)
-    DEV_PROPERTIES_CLASSES.value = array_remove_item(
+    DEV_PROPERTIES_CLASSES.value = array_remove_items(
         [...selected_element.element.classList.values()],
         ["dev-selected", "dev-hover-center","dev-hover-top","dev-hover-bottom","dev-hover-left","dev-hover-right"]
     ).join(" ")
     DEV_PROPERTIES_ID.value = selected_element.element.id
-    if (selected_element.editing === true) return;
+    if (selected_element.element.contentEditable === true) return;
     selected_element.drag_start_element = document.elementFromPoint(e.clientX, e.clientY)
 })
 
@@ -77,12 +77,10 @@ document.addEventListener('dblclick', e => {
     if (over_element.classList.contains('dev-selected')) {
         // guard to deselect if already selected
         change_content_editable(selected_element.element, true)
-        selected_element.editing = true
         return
     }
     select_element(over_element)
     change_content_editable(selected_element.element, true)
-    selected_element.editing = true
 })
 
 // Mouse Over
@@ -96,10 +94,10 @@ document.addEventListener('mousemove', e => {
         return
     }
     unhover()
-    hovered_element = over_element
+    selected_element.hovered_element = over_element
     let drop_position = get_drop_position(over_element, e.clientX, e.clientY)
-    hovered_element?.classList.add(`dev-hover-${drop_position}`)
-    //console.log(hovered_element?.classList);
+    selected_element.hovered_element?.classList.add(`dev-hover-${drop_position}`)
+    //console.log(selected_element.hovered_element?.classList);
 })
 
 // Mouse Up
@@ -116,7 +114,7 @@ document.addEventListener('mouseup', e => {
     // guard against dragging from the wrong node
     if (selected_element.element !== selected_element.drag_start_element) return;
     // guard against moving while editing content
-    if (selected_element.editing === true) return;
+    if (selected_element.element.contentEditable === true) return;
     
     // Get placement position
     let drop_position = get_drop_position(over_element, e.clientX, e.clientY)
@@ -177,3 +175,11 @@ function get_drop_position(over_element, mousex, mousey) {
     return "center";
 
 }
+
+document.addEventListener("copy", e => {
+    client_storage.clipboard.copy()
+})
+
+document.addEventListener("paste", e => {
+    client_storage.clipboard.paste()
+})

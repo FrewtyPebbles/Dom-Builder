@@ -1,35 +1,36 @@
 /* SELECTED*/
 
-:is(.dev-selected, .dev-hover).dev-selected {
+:is(.dev-selected, .dev-hover-center, .dev-hover-top, .dev-hover-left, .dev-hover-bottom, .dev-hover-right).dev-selected {
+    outline: none !important;
     border: rgba(0, 217, 255, 0.579) solid !important;
     user-select: none !important;
 }
-.dev-selected > * {
-    border: rgba(71, 87, 90, 0.435) dashed 1px !important;
+.dev-selected * {
+    outline: rgba(71, 87, 90, 0.435) dashed 1px !important;
 }
 
 /* HOVER */
 .dev-hover-center {
-    border: rgba(230, 0, 255, 0.579) solid !important;
+    outline: rgba(230, 0, 255, 0.579) solid !important;
 }
 .dev-hover-top {
-    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    outline: rgba(106, 0, 255, 0.579) dashed 2px;
     border-top: rgba(230, 0, 255, 0.579) solid !important;
 }
 .dev-hover-bottom {
-    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    outline: rgba(106, 0, 255, 0.579) dashed 2px;
     border-bottom: rgba(230, 0, 255, 0.579) solid !important;
 }
 .dev-hover-left {
-    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    outline: rgba(106, 0, 255, 0.579) dashed 2px;
     border-left: rgba(230, 0, 255, 0.579) solid !important;
 }
 .dev-hover-right {
-    border: rgba(106, 0, 255, 0.579) dashed 2px;
+    outline: rgba(106, 0, 255, 0.579) dashed 2px;
     border-right: rgba(230, 0, 255, 0.579) solid !important;
 }
 :is(.dev-hover-center, .dev-hover-top, .dev-hover-left, .dev-hover-bottom, .dev-hover-right) > * {
-    border: rgba(79, 71, 90, 0.435) dashed 1px;
+    outline: rgba(79, 71, 90, 0.435) dashed 1px;
 }
 /* ELEMENTS */
 #dev-root {
@@ -41,6 +42,8 @@
 
 #dev-body {
     flex-grow: 1;
+    min-height: 100%;
+    height: fit-content;
 }
 
 #dev-body * {
@@ -93,10 +96,13 @@ pre.dev-style-main {
     height: 100%;
     width: calc(100% - 22px);
     padding: 10px;
-    tab-size: 10px;
+    tab-size: 30px;
     resize: none;
 }
 
-/* #dev-style-close, #dev-script-close {
-
-} */
+#dev-properties {
+    position: sticky;
+    top: 0;
+    right: 0;
+    align-self: flex-start;
+}
