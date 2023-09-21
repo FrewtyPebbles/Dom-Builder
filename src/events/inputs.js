@@ -1,58 +1,9 @@
-import { DEV_BODY, DEV_PROPERTIES_CLASSES, DEV_PROPERTIES_ID } from "./elements.js"
-import { array_remove_items } from "./utility.js"
+import { DEV_BODY, DEV_PROPERTIES_CLASSES, DEV_PROPERTIES_ID } from "../state/elements.js"
+import { array_remove_items, change_content_editable, get_drop_position } from "../utility.js"
 
-import { client_storage, selected_element } from "./globals.js"
+import { client_storage, selected_element } from "../state/state.js"
 
 /// Mouse Event Handlers
-function unhover() {
-    [
-        "center",
-        "top",
-        "bottom",
-        "left",
-        "right"
-    ].forEach(pos => {
-        while (selected_element.hovered_element?.classList.contains(`dev-hover-${pos}`)) {
-            selected_element.hovered_element?.classList.remove(`dev-hover-${pos}`)
-        }
-    })
-}
-
-function deselect() {
-    let allElements = document.querySelectorAll('*');
-    allElements.forEach(element => {
-        while (element?.classList.contains('dev-selected')) {
-            element?.classList.remove('dev-selected')
-        }
-    })
-    change_content_editable(selected_element.element, false)
-    selected_element.selected = false
-}
-
-/** @type {(over_element:HTMLElement) => void} */
-function select_element(over_element) {
-     // guard: already selected
-    if (over_element === selected_element.element) return;
-    deselect()
-    selected_element.element = over_element
-    selected_element.selected = true
-    selected_element.element?.classList.add('dev-selected')
-}
-
-/** @type {(node:HTMLElement | ChildNode, callback:(child: ChildNode) => string) => void} */
-function all_descendants(node, callback) {
-    for (var i = 0; i < node.childNodes.length; i++) {
-      var child = node.childNodes[i];
-      all_descendants(child, callback);
-      callback(child);
-    }
-}
-
-/** @type {(node:HTMLElement, editable:boolean) => void} */
-function change_content_editable(node, editable) {
-    node.contentEditable = editable
-    all_descendants(node, () => node.contentEditable = editable)
-}
 
 // Mouse Down - Get start position of element drag
 document.addEventListener('mousedown', e => {
@@ -60,13 +11,28 @@ document.addEventListener('mousedown', e => {
     if (over_element.getAttribute('contenteditable') === true) return;
     if (!DEV_BODY.contains(over_element)) return;
     if (selected_element.element.contains(over_element) && selected_element.element.contentEditable === true) return;
-    select_element(over_element)
+    
+    //select the element
+    selected_element.select(over_element)
+
+    //Remove dev classes from properties editor
     DEV_PROPERTIES_CLASSES.value = array_remove_items(
         [...selected_element.element.classList.values()],
-        ["dev-selected", "dev-hover-center","dev-hover-top","dev-hover-bottom","dev-hover-left","dev-hover-right"]
+        [
+            "dev-selected", 
+            "dev-hover-center",
+            "dev-hover-top",
+            "dev-hover-bottom",
+            "dev-hover-left",
+            "dev-hover-right"
+        ]
     ).join(" ")
+    
+    //set properties id value
     DEV_PROPERTIES_ID.value = selected_element.element.id
+    
     if (selected_element.element.contentEditable === true) return;
+    
     selected_element.drag_start_element = document.elementFromPoint(e.clientX, e.clientY)
 })
 
@@ -74,12 +40,11 @@ document.addEventListener('mousedown', e => {
 document.addEventListener('dblclick', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
     if (!DEV_BODY.contains(over_element) || over_element === DEV_BODY) return;
-    if (over_element.classList.contains('dev-selected')) {
+    if (selected_element.selected && selected_element.element === over_element) {
         // guard to deselect if already selected
         change_content_editable(selected_element.element, true)
         return
     }
-    select_element(over_element)
     change_content_editable(selected_element.element, true)
 })
 
@@ -87,13 +52,13 @@ document.addEventListener('dblclick', e => {
 document.addEventListener('mousemove', e => {
     let over_element = document.elementFromPoint(e.clientX, e.clientY)
     if (over_element === DEV_BODY) return;
-    if (!DEV_BODY.contains(over_element)) {unhover(); return};
+    if (!DEV_BODY.contains(over_element)) {selected_element.unhover(); return};
     if (over_element.classList.contains('dev-hover')) {
         // guard to deselect if already selected
-        unhover()
+        selected_element.unhover()
         return
     }
-    unhover()
+    selected_element.unhover()
     selected_element.hovered_element = over_element
     let drop_position = get_drop_position(over_element, e.clientX, e.clientY)
     selected_element.hovered_element?.classList.add(`dev-hover-${drop_position}`)
@@ -150,31 +115,8 @@ document.addEventListener('mouseup', e => {
     selected_element.element = DEV_BODY
     
     // End Place Element
+    client_storage.history.push()
 })
-
-function get_drop_position(over_element, mousex, mousey) {
-    if (over_element.childNodes.length <= 0) return "center";
-    let rect = over_element.getBoundingClientRect()
-    let mouse_pos = {x:mousex, y:mousey}
-    let elem_bounds = {
-        top: rect.top,
-        bottom: rect.bottom,
-        left: rect.left,
-        right: rect.right,
-        x: rect.x,
-        y: rect.y,
-        height: rect.height,
-        width: rect.width
-    }
-    let local_mouse_pos = {x:mouse_pos.x-elem_bounds.x, y:mouse_pos.y-elem_bounds.y}
-    
-    if (local_mouse_pos.y < elem_bounds.height/4) return "top";
-    if (local_mouse_pos.y > elem_bounds.height*3/4) return "bottom";
-    if (local_mouse_pos.x > elem_bounds.width*3/4) return "right";
-    if (local_mouse_pos.x < elem_bounds.width/4) return "left";
-    return "center";
-
-}
 
 document.addEventListener("copy", e => {
     client_storage.clipboard.copy()
@@ -182,4 +124,15 @@ document.addEventListener("copy", e => {
 
 document.addEventListener("paste", e => {
     client_storage.clipboard.paste()
+    client_storage.history.push()
+})
+
+// Keyboard Input
+document.addEventListener("keydown", e => {
+    if (e.key === "Z" && e.ctrlKey) { // Redo
+        client_storage.history.redo()
+    }
+    else if (e.key === "z" && e.ctrlKey) { // Undo
+        client_storage.history.undo()
+    }
 })

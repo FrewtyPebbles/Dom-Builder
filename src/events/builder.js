@@ -22,27 +22,39 @@ import {
     DEV_PROPERTIES_ID,
     DEV_STYLE_EDITOR_ANIMATION,
     DEV_BAR_INPUT_TITLE
-} from "./elements.js";
+} from "../state/elements.js";
 
-import { selected_element } from "./globals.js";
+import { selected_element, client_storage } from "../state/state.js";
 
-import { array_remove_items } from "./utility.js";
+import { array_remove_items } from "../utility.js";
 
-import * as Types from "./types.js"
+import * as Types from "../types.js"
 
 DEV_BAR_ELEMENT.addEventListener("click", e => {
-    selected_element.element.appendChild(document.createElement(e.target.value))
+    if (e.target.value === "Elements") return
+
+
+    let new_node = document.createElement(e.target.value)
+    selected_element.element.appendChild(new_node)
+    selected_element._select(new_node)
+
+
+    client_storage.history.push()
 })
 
 DEV_BAR_BUTTON_DELETE.addEventListener("click", e => {
     if (selected_element.element === DEV_BODY) return;
+
+
+    let parent = selected_element.element.parentElement
     selected_element.element.remove()
-    selected_element.element = DEV_BODY
-    selected_element.selected = false
-    selected_element.editing = false
+    selected_element._select(parent)
+
+
+    client_storage.history.push()
 })
 
-DEV_BAR_BUTTON_EXPORT.addEventListener("click", e => {
+DEV_BAR_BUTTON_EXPORT.addEventListener("click", async e => {
     let body = DEV_BODY.innerHTML;
     let script = DEV_SCRIPT_EDITOR.value
     let css = DEV_STYLE_EDITOR.value.replace(/\r\n/g, "")
@@ -66,27 +78,11 @@ DEV_BAR_BUTTON_EXPORT.addEventListener("click", e => {
         ${body}
       </body>
     </html>`;
-    download_file(doc, "index.html", "text/plain");
+    const handle = await showSaveFilePicker();
+    const writable = await handle.createWritable();
+    await writable.write( doc );
+    writable.close();
 })
-
-/** @type {(data:string, filename:string, type:string) => void} */
-function download_file(data, filename, type) {
-    var file = new Blob([data], {type: type});
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else { // Others
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
-}
 
 // Js Handler
 DEV_BAR_BUTTON_JS.addEventListener("click", e => {
