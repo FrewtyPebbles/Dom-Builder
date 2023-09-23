@@ -8,21 +8,10 @@
     <meta name="description"
         content="An easy to use frontend website builder for both web developers and non web developers.">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    
-    <!-- Code Mirror -->
-    <link rel="stylesheet" href="packages/codemirror/codemirror.css">
-    <link rel="stylesheet" href="packages/codemirror/addon/fold/foldgutter.css" />
-    <script src="packages/codemirror/codemirror.js"></script>
-    <script src="packages/codemirror/addon/fold/foldcode.js"></script>
-    <script src="packages/codemirror/addon/fold/foldgutter.js"></script>
-    <script src="packages/codemirror/addon/fold/brace-fold.js"></script>
-    <script src="packages/codemirror/mode/javascript/javascript.js"></script>
-    <script src="packages/codemirror/mode/css/css.js"></script>
-    <!-- end Code Mirror -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 
     <link rel="stylesheet" href="dev.css">
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="bundle.js"></script>
 </head>
 
 <body>
@@ -115,66 +104,25 @@
             <h3>CSS</h3>
             <button id="dev-style-close">X</button>
         </div>
-        <pre class="dev-style-anim">
-            <textarea id="dev-style-editor-animation" class="dev-editor-input dev-prevent-control">/* Define any keyframe animations here: */</textarea>
-        </pre>
-        <pre class="dev-style-main">
-            <textarea id="dev-style-editor" class="dev-editor-input dev-prevent-control">/* type your css here: */</textarea>
-        </pre>
+        <div id="dev-style-editor-animation" class="dev-style-anim dev-editor-input dev-prevent-control">
+            <!-- editor -->
+        </div>
+        <div id="dev-style-editor" class="dev-style-main dev-editor-input dev-prevent-control">
+            <!-- editor -->
+        </div>
     </div>
     <div id="dev-script" class="dev-editor">
         <div>
             <h3>Java Script</h3>
             <button id="dev-script-close">X</button>
         </div>
-        <pre>
-            <textarea id="dev-script-editor" class="dev-editor-input dev-prevent-control">// Enter your javascript here.</textarea>
-        </pre>
+        <div id="dev-script-editor" class="dev-editor-input dev-prevent-control dev">
+            <!-- editor -->
+        </div>
     </div>
     <style id="dev-style-export">
         /* type your css here: */
     </style>
-    <script>
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        var js_editor = CodeMirror.fromTextArea(document.getElementById("dev-script-editor"), {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
-            foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-
-        document.getElementById("dev-bar-button-js").addEventListener("click", e => {
-            js_editor.refresh()
-        })
-
-        var animation_editor = CodeMirror.fromTextArea(document.getElementById("dev-style-editor-animation"), {
-            mode: "css",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
-            foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-
-        var style_editor = CodeMirror.fromTextArea(document.getElementById("dev-style-editor"), {
-            mode: "css",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
-            foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
-
-        document.getElementById("dev-bar-button-css").addEventListener("click", e => {
-            animation_editor.refresh()
-            style_editor.refresh()
-        })
-    </script>
 </body>
 
 </html>

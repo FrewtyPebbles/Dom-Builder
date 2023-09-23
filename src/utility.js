@@ -1,6 +1,7 @@
 import * as Types from "./types.js";
 
 import CLIENT_STORAGE from "./state/client_storage.js";
+import DEV from "./state/gui.js";
 
 
 /**
@@ -15,10 +16,9 @@ export function array_remove_items(array, items) {
     }
     return array
 }
-
 /** @type {() => boolean} */
 export function dev_focused() {
-    return document.activeElement.classList.contains("dev-prevent-control")
+    return document.activeElement.classList.contains("dev-prevent-control") || DEV.editor_focused
 }
 
 /** @type {(node:HTMLElement | ChildNode, callback:(child: ChildNode) => string) => void} */
@@ -53,21 +53,4 @@ export function get_drop_position(over_element, mousex, mousey) {
     if (local_mouse_pos.x > rect.width - 5) return "right";
     if (local_mouse_pos.x < 5) return "left";
     return "center";
-}
-
-/** @type {(ev: Event) => void} */
-export function tab_to_indent(ev) {
-    if (ev.key == 'Tab') {
-        ev.preventDefault();
-        var start = this.selectionStart;
-        var end = this.selectionEnd;
-
-        // set textarea value to: text before caret + tab + text after caret
-        this.value = this.value.substring(0, start) +
-        "\t" + this.value.substring(end);
-
-        // put caret at right position again
-        this.selectionStart =
-        this.selectionEnd = start + 1;
-    }
 }

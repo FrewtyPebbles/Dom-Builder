@@ -1,6 +1,11 @@
 # DOM Dragger
 
-Dom Dragger is a web application made from scratch without any server side rendering and can be used to build HTML pages without writing any HTML.
+Dom Dragger is a web page builder made from scratch without any server side rendering. It can be used to build HTML pages without writing any HTML.
+
+*To build DOM Dragger run the npm build script*
+```PowerShell
+npm run build
+```
 
 ## Features
 
@@ -14,16 +19,16 @@ Dom Dragger is a web application made from scratch without any server side rende
 
  - Exporting to an html file.
 
- - [Code Mirror 5](https://codemirror.net/5/) Javascript and CSS editor
+ - [Code Mirror 6](https://codemirror.net/) Javascript and CSS editor
 
  - Available as a PWA
 
-## To be Added Features
-
  - Saving and Loading from browser storage
+
+## To be Added Features
 
  - Loading from uploaded html file
 
  - Dynamic element attribute assignment editor
 
- - [Code Mirror 6](https://codemirror.net/) support
+ - In need of a visual update

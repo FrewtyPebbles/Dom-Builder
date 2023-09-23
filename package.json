@@ -1,0 +1,27 @@
+{
+  "name": "dom-dragger-node-js",
+  "version": "1.0.0",
+  "description": "A visual dom builder.",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.config.js && ncp index.html dist/index.html && ncp manifest.json dist/manifest.json && ncp assets/ dist/assets/ && ncp src/dev.css dist/dev.css && ncp dev.py dist/dev.py"
+  },
+  "keywords": [
+    "dom",
+    "dragger"
+  ],
+  "author": "William A. Lim",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "codemirror": "^6.0.1",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@codemirror/lang-css": "^6.2.1",
+    "@codemirror/lang-javascript": "^6.2.1",
+    "ncp": "^2.0.0"
+  }
+}

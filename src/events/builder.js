@@ -62,20 +62,6 @@ DEV.style.close.addEventListener("click", e => {
     DEV.style.root.style.display = "none";
 })
 
-// css render on input
-DEV.style.editor.style.addEventListener("input", e => DEV.style.render())
-
-// css render on input
-DEV.style.editor.animation.addEventListener("input", e => DEV.style.render())
-
-
-
-DEV.style.editor.style.addEventListener('keydown', tab_to_indent);
-
-DEV.style.editor.animation.addEventListener('keydown', tab_to_indent);
-
-DEV.script.editor.addEventListener('keydown', tab_to_indent);
-
 // Properties
 
 // classes

@@ -1,3 +1,11 @@
+import {basicSetup} from "codemirror"
+import {EditorView, keymap} from "@codemirror/view"
+import {indentWithTab} from "@codemirror/commands"
+import {javascript} from "@codemirror/lang-javascript"
+import {css} from "@codemirror/lang-css"
+import DEV from "./gui"
+
+
 const _DEV = {
     body: document.getElementById('dev-body'),
     bar: {
@@ -26,14 +34,57 @@ const _DEV = {
     script: {
         root: document.getElementById('dev-script'),
         close: document.getElementById('dev-script-close'),
-        editor: document.getElementById('dev-script-editor')
+        editor: new EditorView({
+            doc:"// Type your javascript here.",
+            extensions: [
+              basicSetup,
+              keymap.of([indentWithTab]),
+              javascript(),
+              EditorView.focusChangeEffect.of((state, focusing) => {
+                DEV.editor_focused = focusing
+              })
+            ],
+            parent: document.getElementById("dev-script-editor")
+          })
     },
     style: {
         root: document.getElementById('dev-style'),
         close: document.getElementById('dev-style-close'),
         editor: {
-            style: document.getElementById('dev-style-editor'),
-            animation: document.getElementById('dev-style-editor-animation')
+            style: new EditorView({
+                doc:"/* CSS Styles go here */",
+                extensions: [
+                  basicSetup,
+                  keymap.of([indentWithTab]),
+                  css(),
+                  EditorView.focusChangeEffect.of((state, focusing) => {
+                    DEV.editor_focused = focusing
+                  }),
+                  EditorView.updateListener.of((view) => {
+                    if (view.docChanged) {
+                        DEV.style.render()
+                    }
+                })
+                ],
+                parent: document.getElementById("dev-style-editor")
+              }),
+            animation: new EditorView({
+                doc:"/* Keyframe Animations go here */",
+                extensions: [
+                  basicSetup,
+                  keymap.of([indentWithTab]),
+                  css(),
+                  EditorView.focusChangeEffect.of((state, focusing) => {
+                    DEV.editor_focused = focusing
+                  }),
+                  EditorView.updateListener.of((view) => {
+                    if (view.docChanged) {
+                        DEV.style.render()
+                    }
+                })
+                ],
+                parent: document.getElementById("dev-style-editor-animation")
+              })
         },
         export: document.getElementById('dev-style-export')
     }

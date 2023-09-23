@@ -1,5 +1,5 @@
 // TYPE DEFINITIONS
-
+import { EditorView } from "@codemirror/view";
 /**
  * @typedef {Object} Clipboard
  * @property {HTMLElement | null} element The element in the clipboard.
@@ -23,9 +23,9 @@
  * @property {Clipboard} clipboard Handles copying and pasting of elements.
  * @property {History} history Handles undos and redos.
  * @property {HTMLElement | null} body A reference to the dev body. This is utilized in saving and loading.
- * @property {HTMLElement | null} style A reference to the dev style editor. This is utilized in saving and loading.
- * @property {HTMLElement | null} animation A reference to the dev animation editor. This is utilized in saving and loading.
- * @property {HTMLElement | null} script A reference to the dev script editor. This is utilized in saving and loading.
+ * @property {EditorView | null} style A reference to the dev style editor. This is utilized in saving and loading.
+ * @property {EditorView | null} animation A reference to the dev animation editor. This is utilized in saving and loading.
+ * @property {EditorView | null} script A reference to the dev script editor. This is utilized in saving and loading.
  * @property {() => void} save Saves the current state of the website to localstorage.
  * @property {() => void} load Loads the current state of the website from localstorage.
  * @property {() => Promise.<void>} export Exports the current state of the website to an html file.  This function is asyncronous.

@@ -67,12 +67,14 @@ const CLIENT_STORAGE = {
             this.data.length = this.current_index + 1
         },
         undo() {
+            if (dev_focused()) return
             if (this.current_index === 0) {return}
             this.current_index--
             _DEV.body.innerHTML = ""
             _DEV.body.append(...this.current().childNodes)
         },
         redo() {
+            if (dev_focused()) return
             if (this.current_index === this.data.length-1) {return}
             this.current_index++
             _DEV.body.innerHTML = ""
@@ -82,9 +84,9 @@ const CLIENT_STORAGE = {
     save() {
         //Save progress
         window.localStorage.setItem("body", this.body.innerHTML)
-        window.localStorage.setItem("style", this.style.value)
-        window.localStorage.setItem("animation", this.animation.value)
-        window.localStorage.setItem("script", this.script.value)
+        window.localStorage.setItem("style", this.style.state.doc.toString())
+        window.localStorage.setItem("animation", this.animation.state.doc.toString())
+        window.localStorage.setItem("script", this.script.state.doc.toString())
     },
     load() {
         let storage = window.localStorage
@@ -95,16 +97,34 @@ const CLIENT_STORAGE = {
         let script = storage.getItem("script")
 
         this.body.innerHTML = body
-        this.style.value = style
-        this.animation.value = animation
-        this.script.value = script
+        this.style.dispatch({
+            changes: {
+                from: 0,
+                to: this.style.state.doc.length,
+                insert: style
+            }
+        })
+        this.animation.dispatch({
+            changes: {
+                from: 0,
+                to: this.animation.state.doc.length,
+                insert: animation
+            }
+        })
+        this.script.dispatch({
+            changes: {
+                from: 0,
+                to: this.script.state.doc.length,
+                insert: script
+            }
+        })
         DEV.style.render()
     },
     async export() {
         let body = this.body.innerHTML;
-        let script = this.script.value
-        let css = this.style.value.replace(/\r\n/g, "")
-        let css_animation = this.animation.value.replace(/\r\n/g, "")
+        let script = this.script.state.doc.toString()
+        let css = this.style.state.doc.toString().replace(/\r\n/g, "")
+        let css_animation = this.animation.state.doc.toString().replace(/\r\n/g, "")
         let doc = `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -114,6 +134,7 @@ const CLIENT_STORAGE = {
             <title>${DEV.bar.title.value}</title>
         </head>
         <body>
+            ${body}
             <script>
                 ${script}
             </script>
@@ -121,7 +142,6 @@ const CLIENT_STORAGE = {
                 ${css_animation}
                 ${css}
             </style>
-            ${body}
         </body>
         </html>`;
         const handle = await showSaveFilePicker();

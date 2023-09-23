@@ -41,9 +41,9 @@ const DEV = {
     style: {
         ..._DEV.style,
         render() {
-            let re = /^[^\r\n&{}]+{$/mg
-            let matches = String(this.editor.style.value).matchAll(re)
-            let render_value = String(this.editor.style.value.replace(/\r\n/g, ""))
+            let re = /^[^\r\n&{}]+({(?=\n))|([^\n]})$/mg
+            let matches = this.editor.style.state.doc.toString().matchAll(re)
+            let render_value = this.editor.style.state.doc.toString().replace(/\r\n/g, "")
             let matcharray = []
             for (const _match of matches) {
                 matcharray.push(_match[0])
@@ -54,11 +54,12 @@ const DEV = {
                     render_match = render_match.replace("body", " ")
                 render_value = render_value.replace(match, `& ${render_match}`)
             }
-            this.export.innerHTML = `${this.editor.animation.value}#dev-body {
+            this.export.innerHTML = `${this.editor.animation.state.doc.toString()}#dev-body {
                 ${render_value}
             }`
         }
-    }
+    },
+    editor_focused: false
 }
 
 export default DEV
