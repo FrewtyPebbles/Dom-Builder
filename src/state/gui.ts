@@ -1,9 +1,9 @@
-import _DEV from "./gui_elements.js"
+import _DEV from "./gui_elements"
 // This singleton inherits its elements from _DEV so that there are not instantiation order issues with the other singletons
 
-import SELECTED_ELEMENT from "./selected_element.js"
+import SELECTED_ELEMENT from "./selected_element"
 
-import { array_remove_items } from "../utility.js"
+import { array_remove_items } from "#utility"
 
 const DEV = {
     body: _DEV.body,

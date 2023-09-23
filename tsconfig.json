@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+	  "outDir": "./dist/",
+	  "noImplicitAny": true,
+	  "module": "es6",
+	  "target": "es2015",
+	  "allowJs": true,
+	  "moduleResolution": "node",
+	  "types": [ "@types/wicg-file-system-access"],
+	  "paths": {
+		"#state/*": ["./src/state/*"],
+		"#types": ["./src/types"],
+		"#utility": ["./src/utility"],
+		"#events/*": ["./src/events/*"]
+	}
+	}
+  }

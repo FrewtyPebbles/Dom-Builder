@@ -1,13 +1,13 @@
-import _DEV from "./gui_elements.js"
+import _DEV from "./gui_elements"
 
-import SELECTED_ELEMENT from "./selected_element.js"
+import SELECTED_ELEMENT from "./selected_element"
 
-import * as Types from "../types.js"
-import { dev_focused } from "../utility.js"
-import DEV from "./gui.js"
+import * as Types from "#types"
+import { dev_focused } from "#utility"
+import DEV from "./gui"
 
 /** @type {Types.ClientStorage} */
-const CLIENT_STORAGE = {
+const CLIENT_STORAGE: Types.ClientStorage = {
     body: _DEV.body,
     style: _DEV.style.editor.style,
     animation: _DEV.style.editor.animation,
@@ -17,8 +17,7 @@ const CLIENT_STORAGE = {
         copy() {
             if (!SELECTED_ELEMENT.selected) return
             if (dev_focused()) return
-            /** @type {HTMLElement} */
-            let coppied_element = SELECTED_ELEMENT.element.cloneNode(true)
+            let coppied_element = SELECTED_ELEMENT.element.cloneNode(true) as HTMLElement
             coppied_element.setAttribute( "class",
                 coppied_element.getAttribute("class").replace(RegExp([
                     "dev-selected",
@@ -28,7 +27,7 @@ const CLIENT_STORAGE = {
                     "dev-hover-left",
                     "dev-hover-bottom",
                     "dev-hover-right"
-                ].join("|"), "gm"))
+                ].join("|"), "gm"),"")
             )
             this.element = coppied_element
         },
@@ -131,7 +130,7 @@ const CLIENT_STORAGE = {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>${DEV.bar.title.value}</title>
+            <title>${DEV.bar.title.getAttribute("value")}</title>
         </head>
         <body>
             ${body}

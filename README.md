@@ -1,9 +1,10 @@
 # DOM Dragger
 
-Dom Dragger is a web page builder made from scratch without any server side rendering. It can be used to build HTML pages without writing any HTML.
+![Dom Dragger Logo](https://github.com/FrewtyPebbles/Dom-Dragger/blob/master/assets/dom_dragger_logo_prototype_192x192.png?raw=true)
 
-*To build DOM Dragger run the npm build script*
-```PowerShell
+Dom Dragger is a visual web page builder written in typescript without any server side rendering. It can be used to build HTML pages without writing any HTML.
+
+```
 npm run build
 ```
 

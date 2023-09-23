@@ -1,24 +1,24 @@
-import DEV from "../state/gui.js";
+import DEV from "#state/gui";
 
-import CLIENT_STORAGE from "../state/client_storage.js";
-import SELECTED_ELEMENT from "../state/selected_element.js";
+import CLIENT_STORAGE from "#state/client_storage";
+import SELECTED_ELEMENT from "#state/selected_element";
 
-import { array_remove_items, tab_to_indent } from "../utility.js";
+import { array_remove_items } from "#utility";
 
-import * as Types from "../types.js"
+import * as Types from "#types"
 
 // Bar
 
 DEV.bar.element.addEventListener("change", e => {
-    if (e.target.value === "Elements") return
+    if (DEV.bar.element.getAttribute("value") === "Elements") return
 
-    let new_node = document.createElement(e.target.value)
+    let new_node = document.createElement(DEV.bar.element.getAttribute("value"))
     SELECTED_ELEMENT.element.appendChild(new_node)
     SELECTED_ELEMENT.select(new_node)
 
     CLIENT_STORAGE.history.push()
 
-    e.target.value = "Elements"
+    DEV.bar.element.setAttribute("value", "Elements")
 })
 
 DEV.bar.delete.addEventListener("click", e => SELECTED_ELEMENT.remove())
@@ -67,25 +67,25 @@ DEV.style.close.addEventListener("click", e => {
 // classes
 DEV.properties.classes.addEventListener("input", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.className = `dev-selected ${DEV.properties.classes.value}`
+    SELECTED_ELEMENT.element.className = `dev-selected ${DEV.properties.classes.getAttribute("value")}`
 })
 
 // id
 DEV.properties.id.addEventListener("input", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.id = DEV.properties.id.value
+    SELECTED_ELEMENT.element.id = DEV.properties.id.getAttribute("value")
 })
 
 // position
 DEV.properties.position.addEventListener("change", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.style.position = DEV.properties.position.value
+    SELECTED_ELEMENT.element.style.position = DEV.properties.position.getAttribute("value")
 })
 
 // display
 DEV.properties.display.addEventListener("change", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.style.display = DEV.properties.display.value
+    SELECTED_ELEMENT.element.style.display = DEV.properties.display.getAttribute("value")
 })
 
 // close

@@ -1,7 +1,8 @@
 import {basicSetup} from "codemirror"
 import {EditorView, keymap} from "@codemirror/view"
-import {indentWithTab} from "@codemirror/commands"
-import {javascript} from "@codemirror/lang-javascript"
+import {indentWithTab, defaultKeymap} from "@codemirror/commands"
+import {javascript, scopeCompletionSource, javascriptLanguage} from "@codemirror/lang-javascript"
+import {EditorState, StateEffect} from "@codemirror/state"
 import {css} from "@codemirror/lang-css"
 import DEV from "./gui"
 
@@ -34,15 +35,17 @@ const _DEV = {
     script: {
         root: document.getElementById('dev-script'),
         close: document.getElementById('dev-script-close'),
-        editor: new EditorView({
+        editor: new EditorView({ // JS editor
             doc:"// Type your javascript here.",
             extensions: [
               basicSetup,
-              keymap.of([indentWithTab]),
+              keymap.of([indentWithTab, ...defaultKeymap]),
               javascript(),
-              EditorView.focusChangeEffect.of((state, focusing) => {
+              EditorView.focusChangeEffect.of((state: EditorState, focusing: boolean): StateEffect<any> => {
                 DEV.editor_focused = focusing
-              })
+                return null
+              }),
+              javascriptLanguage.data.of({autocomplete: scopeCompletionSource(globalThis)})
             ],
             parent: document.getElementById("dev-script-editor")
           })
@@ -51,14 +54,15 @@ const _DEV = {
         root: document.getElementById('dev-style'),
         close: document.getElementById('dev-style-close'),
         editor: {
-            style: new EditorView({
+            style: new EditorView({ // CSS Editor
                 doc:"/* CSS Styles go here */",
                 extensions: [
                   basicSetup,
-                  keymap.of([indentWithTab]),
+                  keymap.of([indentWithTab, ...defaultKeymap]),
                   css(),
-                  EditorView.focusChangeEffect.of((state, focusing) => {
+                  EditorView.focusChangeEffect.of((state: EditorState, focusing: boolean): StateEffect<any> => {
                     DEV.editor_focused = focusing
+                    return null
                   }),
                   EditorView.updateListener.of((view) => {
                     if (view.docChanged) {
@@ -68,14 +72,15 @@ const _DEV = {
                 ],
                 parent: document.getElementById("dev-style-editor")
               }),
-            animation: new EditorView({
+            animation: new EditorView({ // Animation Editor
                 doc:"/* Keyframe Animations go here */",
                 extensions: [
                   basicSetup,
-                  keymap.of([indentWithTab]),
+                  keymap.of([indentWithTab, ...defaultKeymap]),
                   css(),
-                  EditorView.focusChangeEffect.of((state, focusing) => {
+                  EditorView.focusChangeEffect.of((state: EditorState, focusing: boolean): StateEffect<any> => {
                     DEV.editor_focused = focusing
+                    return null
                   }),
                   EditorView.updateListener.of((view) => {
                     if (view.docChanged) {

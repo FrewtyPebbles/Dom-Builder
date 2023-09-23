@@ -1,14 +1,13 @@
-import _DEV from "./gui_elements.js"
+import _DEV from "./gui_elements"
 
-import DEV from "./gui.js"
+import DEV from "./gui"
 
-import { change_content_editable } from "../utility.js"
+import { change_content_editable } from "#utility"
 
-import * as Types from "../types.js"
-import CLIENT_STORAGE from "./client_storage.js"
+import * as Types from "#types"
+import CLIENT_STORAGE from "./client_storage"
 
-/** @type {Types.SelectedElement} */
-const SELECTED_ELEMENT = {
+const SELECTED_ELEMENT: Types.SelectedElement = {
     element: _DEV.body,
     selected: false,
     drag_start_element: _DEV.body,

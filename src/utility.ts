@@ -1,13 +1,11 @@
-import * as Types from "./types.js";
+import * as Types from "#types";
 
-import CLIENT_STORAGE from "./state/client_storage.js";
-import DEV from "./state/gui.js";
+import CLIENT_STORAGE from "#state/client_storage";
+import DEV from "#state/gui";
 
 
-/**
- * @type {<T>(array: T[], items: T[]) => T[]}
-*/
-export function array_remove_items(array, items) {
+
+export function array_remove_items<T>(array: T[], items: T[]): T[] {
     for (const item of items) {
         const index = array.indexOf(item);
         if (index > -1) { // only splice array when item is found
@@ -16,13 +14,12 @@ export function array_remove_items(array, items) {
     }
     return array
 }
-/** @type {() => boolean} */
-export function dev_focused() {
+
+export function dev_focused(): boolean {
     return document.activeElement.classList.contains("dev-prevent-control") || DEV.editor_focused
 }
 
-/** @type {(node:HTMLElement | ChildNode, callback:(child: ChildNode) => string) => void} */
-function all_descendants(node, callback) {
+function all_descendants(node:HTMLElement | ChildNode, callback:(child: ChildNode) => string): void {
     for (var i = 0; i < node.childNodes.length; i++) {
       var child = node.childNodes[i];
       all_descendants(child, callback);
@@ -30,19 +27,25 @@ function all_descendants(node, callback) {
     }
 }
 
-/** @type {(node:HTMLElement, editable:boolean) => void} */
-export function change_content_editable(node, editable) {
-
-    // Save the state if the content editable value is being changed
-    if (editable !== node.contentEditable) CLIENT_STORAGE.history.push()
-    
-    node.contentEditable = editable
-    
-    all_descendants(node, () => node.contentEditable = editable)
+export function as_bool(str:string):boolean {
+    return str.toLowerCase() === "true"
 }
 
-/** @type {(over_element:HTMLElement, mousex:number, mousey:number) => string} */
-export function get_drop_position(over_element, mousex, mousey) {
+export function as_string(val:any):string {
+    return `${val}`
+}
+
+export function change_content_editable(node:HTMLElement | Element, editable:boolean): void {
+
+    // Save the state if the content editable value is being changed
+    if (editable !== as_bool((node as HTMLElement).contentEditable)) CLIENT_STORAGE.history.push();
+    
+    (node as HTMLElement).contentEditable = as_string(editable)
+    
+    all_descendants(node, () => (node as HTMLElement).contentEditable = as_string(editable))
+}
+
+export function get_drop_position(over_element:Element, mousex:number, mousey:number): string {
     if (over_element.childNodes.length <= 0) return "center";
     let rect = over_element.getBoundingClientRect()
     let mouse_pos = {x:mousex, y:mousey}
