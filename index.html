@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dom Builder</title>
+    <meta name="description"
+        content="An easy to use frontend website builder for both web developers and non web developers.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    
+    <!-- Code Mirror -->
+    <link rel="stylesheet" href="packages/codemirror/codemirror.css">
+    <link rel="stylesheet" href="packages/codemirror/addon/fold/foldgutter.css" />
+    <script src="packages/codemirror/codemirror.js"></script>
+    <script src="packages/codemirror/addon/fold/foldcode.js"></script>
+    <script src="packages/codemirror/addon/fold/foldgutter.js"></script>
+    <script src="packages/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="packages/codemirror/mode/javascript/javascript.js"></script>
+    <script src="packages/codemirror/mode/css/css.js"></script>
+    <!-- end Code Mirror -->
+
     <link rel="stylesheet" href="dev.css">
-    <!-- <script type="module" src="/src/inputs.js"></script>
-    <script type="module" src="/src/builder.js"></script> -->
     <script type="module" src="/src/main.js"></script>
 </head>
+
 <body>
     <div id="dev-root">
         <nav id="dev-bar">
+            <!-- Bar -->
             <select name="Element" id="dev-bar-element">
                 <option selected disabled>Elements</option>
                 <option value="h1">h1</option>
@@ -35,26 +52,60 @@
             <Button id="dev-bar-button-delete">Delete</Button>
             <Button id="dev-bar-button-css">css</Button>
             <Button id="dev-bar-button-js">js</Button>
-            <Button id="dev-bar-button-export">EXPORT</Button>
+            <Button id="dev-bar-button-save">save</Button>
+            <Button id="dev-bar-button-load">load</Button>
             <input class="dev-prevent-control" type="text" id="dev-bar-input-title" placeholder="Title">
+            <Button id="dev-bar-button-export">EXPORT</Button>
         </nav>
         <div style="display: flex; height: 100%;">
             <div id="dev-body">
-            
             </div>
             <div id="dev-properties">
+                <!-- Properties -->
                 <div class="dev-properties-title">
                     <button id="dev-properties-close">X</button>
                     <h3>Properties</h3>
                 </div>
                 <div>
-                    classes: <input class="dev-prevent-control" type="text" placeholder="classes" id="dev-properties-classes">
+                    classes: <input class="dev-prevent-control" type="text" placeholder="classes"
+                        id="dev-properties-classes">
                 </div>
                 <div>
                     Id: <input class="dev-prevent-control" type="text" placeholder="id" id="dev-properties-id">
                 </div>
+                <div>
+                    Position:
+                    <select name="Position" id="dev-properties-position">
+                        <option selected disabled>Position</option>
+                        <option value="static">Static</option>
+                        <option value="relative">Relative</option>
+                        <option value="absolute">Absolute</option>
+                        <option value="fixed">Fixed</option>
+                        <option value="sticky">Sticky</option>
+                        <option value="inherit">Inherit</option>
+                        <option value="initial">Initial</option>
+                        <option value="revert">Revert</option>
+                        <option value="revert-layer">Revert-layer</option>
+                        <option value="unset">Unset</option>
+                    </select>
+                </div>
+                <div>
+                    Display:
+                    <select name="Display" id="dev-properties-display">
+                        <option selected disabled>Display</option>
+                        <option value="block">Block</option>
+                        <option value="inline">Inline</option>
+                        <option value="inline-block">Inline-Block</option>
+                        <option value="flex">Flex</option>
+                        <option value="inline-flex">Inline-Flex</option>
+                        <option value="grid">grid</option>
+                        <option value="inline-grid">Inline-Grid</option>
+                        <option value="flow-root">Flow-Root</option>
+                        <option value="revert-layer">Revert-layer</option>
+                    </select>
+                </div>
                 <div id="dev-properties-settings-root">
-        
+
                 </div>
             </div>
         </div>
@@ -77,13 +128,53 @@
             <button id="dev-script-close">X</button>
         </div>
         <pre>
-            <textarea id="dev-script-editor" class="dev-editor-input dev-prevent-control">
-                // type your javascript here:
-            </textarea>
+            <textarea id="dev-script-editor" class="dev-editor-input dev-prevent-control">// Enter your javascript here.</textarea>
         </pre>
     </div>
     <style id="dev-style-export">
         /* type your css here: */
     </style>
+    <script>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        var js_editor = CodeMirror.fromTextArea(document.getElementById("dev-script-editor"), {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        document.getElementById("dev-bar-button-js").addEventListener("click", e => {
+            js_editor.refresh()
+        })
+
+        var animation_editor = CodeMirror.fromTextArea(document.getElementById("dev-style-editor-animation"), {
+            mode: "css",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        var style_editor = CodeMirror.fromTextArea(document.getElementById("dev-style-editor"), {
+            mode: "css",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        });
+
+        document.getElementById("dev-bar-button-css").addEventListener("click", e => {
+            animation_editor.refresh()
+            style_editor.refresh()
+        })
+    </script>
 </body>
+
 </html>

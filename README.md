@@ -14,6 +14,10 @@ Dom Dragger is a web application made from scratch without any server side rende
 
  - Exporting to an html file.
 
+ - [Code Mirror 5](https://codemirror.net/5/) Javascript and CSS editor
+
+ - Available as a PWA
+
 ## To be Added Features
 
  - Saving and Loading from browser storage
@@ -22,6 +26,4 @@ Dom Dragger is a web application made from scratch without any server side rende
 
  - Dynamic element attribute assignment editor
 
- - PWA Support
-
- 
+ - [Code Mirror 6](https://codemirror.net/) support

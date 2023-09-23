@@ -41,6 +41,7 @@
 }
 
 #dev-body {
+    margin-top: 5px;
     flex-grow: 1;
     min-height: 100%;
     height: fit-content;
@@ -68,8 +69,8 @@
     background-color: black;
 }
 
-.dev-editor  pre {
-    height: 80%;
+.dev-editor pre {
+    height: 90%;
     max-height: fit-content;
     width: 100%;
 }
@@ -89,13 +90,12 @@ pre.dev-style-main {
     display:flex;
     justify-content: space-between;
 }
-.dev-editor-input {
+.dev-editor-input, .CodeMirror {
     display: block;
     background-color: white;
     color: black;
     height: 100%;
-    width: calc(100% - 22px);
-    padding: 10px;
+    width: calc(100%);
     tab-size: 30px;
     resize: none;
 }

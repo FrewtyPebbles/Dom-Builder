@@ -1,165 +1,108 @@
-import {
-    DEV_BAR,
-    DEV_BAR_ELEMENT,
-    DEV_BAR_BUTTON_BOLD,
-    DEV_BAR_BUTTON_DELETE,
-    DEV_BAR_BUTTON_ITALIC,
-    DEV_BAR_BUTTON_UNDERLINE,
-    DEV_BODY,
-    DEV_BAR_BUTTON_EXPORT,
-    DEV_SCRIPT,
-    DEV_SCRIPT_CLOSE,
-    DEV_SCRIPT_EDITOR,
-    DEV_STYLE,
-    DEV_STYLE_CLOSE,
-    DEV_STYLE_EDITOR,
-    DEV_BAR_BUTTON_CSS,
-    DEV_BAR_BUTTON_JS,
-    DEV_STYLE_EXPORT,
-    DEV_PROPERTIES,
-    DEV_PROPERTIES_CLASSES,
-    DEV_PROPERTIES_CLOSE,
-    DEV_PROPERTIES_ID,
-    DEV_STYLE_EDITOR_ANIMATION,
-    DEV_BAR_INPUT_TITLE
-} from "../state/elements.js";
+import DEV from "../state/gui.js";
 
-import { selected_element, client_storage } from "../state/state.js";
+import CLIENT_STORAGE from "../state/client_storage.js";
+import SELECTED_ELEMENT from "../state/selected_element.js";
 
-import { array_remove_items } from "../utility.js";
+import { array_remove_items, tab_to_indent } from "../utility.js";
 
 import * as Types from "../types.js"
 
-DEV_BAR_ELEMENT.addEventListener("click", e => {
+// Bar
+
+DEV.bar.element.addEventListener("change", e => {
     if (e.target.value === "Elements") return
 
-
     let new_node = document.createElement(e.target.value)
-    selected_element.element.appendChild(new_node)
-    selected_element._select(new_node)
+    SELECTED_ELEMENT.element.appendChild(new_node)
+    SELECTED_ELEMENT.select(new_node)
 
+    CLIENT_STORAGE.history.push()
 
-    client_storage.history.push()
+    e.target.value = "Elements"
 })
 
-DEV_BAR_BUTTON_DELETE.addEventListener("click", e => {
-    if (selected_element.element === DEV_BODY) return;
+DEV.bar.delete.addEventListener("click", e => SELECTED_ELEMENT.remove())
 
-
-    let parent = selected_element.element.parentElement
-    selected_element.element.remove()
-    selected_element._select(parent)
-
-
-    client_storage.history.push()
-})
-
-DEV_BAR_BUTTON_EXPORT.addEventListener("click", async e => {
-    let body = DEV_BODY.innerHTML;
-    let script = DEV_SCRIPT_EDITOR.value
-    let css = DEV_STYLE_EDITOR.value.replace(/\r\n/g, "")
-    let css_animation = DEV_STYLE_EDITOR_ANIMATION.value.replace(/\r\n/g, "")
-    let doc = `<!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>${DEV_BAR_INPUT_TITLE.value}</title>
-      </head>
-      <body>
-        <script>
-            ${script}
-        </script>
-        <style>
-            ${css_animation}
-            ${css}
-        </style>
-        ${body}
-      </body>
-    </html>`;
-    const handle = await showSaveFilePicker();
-    const writable = await handle.createWritable();
-    await writable.write( doc );
-    writable.close();
-})
+DEV.bar.export.addEventListener("click", async e => await CLIENT_STORAGE.export())
 
 // Js Handler
-DEV_BAR_BUTTON_JS.addEventListener("click", e => {
-    DEV_SCRIPT.style.display = "block";
+DEV.bar.js.addEventListener("click", e => {
+    DEV.script.root.style.display = "block";
 })
 
 // css Handler
-DEV_BAR_BUTTON_CSS.addEventListener("click", e => {
-    DEV_STYLE.style.display = "block";
+DEV.bar.css.addEventListener("click", e => {
+    DEV.style.root.style.display = "block";
 })
 
+// properties Handler
+DEV.bar.properties.addEventListener("click", e => {
+    DEV.properties.root.style.display = "block";
+})
+
+// save Handler
+DEV.bar.save.addEventListener("click", e => {
+    CLIENT_STORAGE.save()
+})
+
+// load Handler
+DEV.bar.load.addEventListener("click", e => {
+    CLIENT_STORAGE.load()
+})
+
+// Editor
+
 // Js CLOSE Handler
-DEV_SCRIPT_CLOSE.addEventListener("click", e => {
-    DEV_SCRIPT.style.display = "none";
+DEV.script.close.addEventListener("click", e => {
+    DEV.script.root.style.display = "none";
 })
 
 // css CLOSE Handler
-DEV_STYLE_CLOSE.addEventListener("click", e => {
-    DEV_STYLE.style.display = "none";
+DEV.style.close.addEventListener("click", e => {
+    DEV.style.root.style.display = "none";
 })
 
-/** @type {(ev: Event) => void} */
-function style_input_handler(ev) {
-    let re = /(^([^\r\n,&{}]+)(,(?=[^}]*{)|\s*{))/mg
-    let matches = String(DEV_STYLE_EDITOR.value).matchAll(re)
-    let render_value = String(DEV_STYLE_EDITOR.value.replace(/\r\n/g, ""))
-    let matcharray = []
-    for (const _match of matches) {
-        if (!_match[0].match(/(^[ \t]*(from|to|\d+%))/))
-        matcharray.push(_match[0])
-    }
-    for (const match of matcharray){
-        let render_match = match
-        if (match.trimStart().startsWith("body"))
-            render_match = render_match.replace("body", " ")
-        render_value = render_value.replace(match, `& ${render_match}`)
-    }
-    DEV_STYLE_EXPORT.innerHTML = `${DEV_STYLE_EDITOR_ANIMATION.value}#dev-body {
-        ${render_value}
-    }`
-}
+// css render on input
+DEV.style.editor.style.addEventListener("input", e => DEV.style.render())
 
-DEV_STYLE_EDITOR.addEventListener("input", style_input_handler)
+// css render on input
+DEV.style.editor.animation.addEventListener("input", e => DEV.style.render())
 
-DEV_STYLE_EDITOR_ANIMATION.addEventListener("input", style_input_handler)
 
-/** @type {(ev: Event) => void} */
-function tab_to_indent(ev) {
-    if (ev.key == 'Tab') {
-        ev.preventDefault();
-        var start = this.selectionStart;
-        var end = this.selectionEnd;
 
-        // set textarea value to: text before caret + tab + text after caret
-        this.value = this.value.substring(0, start) +
-        "\t" + this.value.substring(end);
+DEV.style.editor.style.addEventListener('keydown', tab_to_indent);
 
-        // put caret at right position again
-        this.selectionStart =
-        this.selectionEnd = start + 1;
-    }
-}
+DEV.style.editor.animation.addEventListener('keydown', tab_to_indent);
 
-DEV_STYLE_EDITOR.addEventListener('keydown', tab_to_indent);
-
-DEV_STYLE_EDITOR_ANIMATION.addEventListener('keydown', tab_to_indent);
-
-DEV_SCRIPT_EDITOR.addEventListener('keydown', tab_to_indent);
+DEV.script.editor.addEventListener('keydown', tab_to_indent);
 
 // Properties
 
-DEV_PROPERTIES_CLASSES.addEventListener("input", e => {
-    if (selected_element.element === DEV_BODY) return;
-    selected_element.element.className = `dev-selected ${DEV_PROPERTIES_CLASSES.value}`
+// classes
+DEV.properties.classes.addEventListener("input", e => {
+    if (SELECTED_ELEMENT.element === DEV.body) return;
+    SELECTED_ELEMENT.element.className = `dev-selected ${DEV.properties.classes.value}`
 })
 
-DEV_PROPERTIES_ID.addEventListener("input", e => {
-    if (selected_element.element === DEV_BODY) return;
-    selected_element.element.id = DEV_PROPERTIES_ID.value
+// id
+DEV.properties.id.addEventListener("input", e => {
+    if (SELECTED_ELEMENT.element === DEV.body) return;
+    SELECTED_ELEMENT.element.id = DEV.properties.id.value
+})
+
+// position
+DEV.properties.position.addEventListener("change", e => {
+    if (SELECTED_ELEMENT.element === DEV.body) return;
+    SELECTED_ELEMENT.element.style.position = DEV.properties.position.value
+})
+
+// display
+DEV.properties.display.addEventListener("change", e => {
+    if (SELECTED_ELEMENT.element === DEV.body) return;
+    SELECTED_ELEMENT.element.style.display = DEV.properties.display.value
+})
+
+// close
+DEV.properties.close.addEventListener("click", e => {
+    DEV.properties.root.style.display = "none";
 })

@@ -1,0 +1,20 @@
+{
+	"name": "DOM-Dragger",
+	"short_name": "DOM Dragger",
+	"start_url": ".",
+	"theme_color": "#4287f5",
+	"background_color": "#ffffff",
+	"display": "standalone",
+	"icons":[
+	  {
+		"src":"assets/dom_dragger_logo_prototype_192x192.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	  },
+	  {
+		"src":"assets/dom_dragger_logo_prototype_512x512.png",
+		"sizes": "512x512",
+		"type": "image/png"
+	  }
+	]
+}

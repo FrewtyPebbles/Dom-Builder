@@ -1,5 +1,6 @@
-import * as Types from "./types.js"
-import { client_storage } from "./state/state.js";
+import * as Types from "./types.js";
+
+import CLIENT_STORAGE from "./state/client_storage.js";
 
 
 /**
@@ -33,7 +34,7 @@ function all_descendants(node, callback) {
 export function change_content_editable(node, editable) {
 
     // Save the state if the content editable value is being changed
-    if (editable !== node.contentEditable) client_storage.history.push()
+    if (editable !== node.contentEditable) CLIENT_STORAGE.history.push()
     
     node.contentEditable = editable
     
@@ -47,10 +48,26 @@ export function get_drop_position(over_element, mousex, mousey) {
     let mouse_pos = {x:mousex, y:mousey}
     let local_mouse_pos = {x:mouse_pos.x-rect.x, y:mouse_pos.y-rect.y}
     
-    if (local_mouse_pos.y < rect.height/4) return "top";
-    if (local_mouse_pos.y > rect.height*3/4) return "bottom";
-    if (local_mouse_pos.x > rect.width*3/4) return "right";
-    if (local_mouse_pos.x < rect.width/4) return "left";
+    if (local_mouse_pos.y < 5) return "top";
+    if (local_mouse_pos.y > rect.height - 5) return "bottom";
+    if (local_mouse_pos.x > rect.width - 5) return "right";
+    if (local_mouse_pos.x < 5) return "left";
     return "center";
+}
 
+/** @type {(ev: Event) => void} */
+export function tab_to_indent(ev) {
+    if (ev.key == 'Tab') {
+        ev.preventDefault();
+        var start = this.selectionStart;
+        var end = this.selectionEnd;
+
+        // set textarea value to: text before caret + tab + text after caret
+        this.value = this.value.substring(0, start) +
+        "\t" + this.value.substring(end);
+
+        // put caret at right position again
+        this.selectionStart =
+        this.selectionEnd = start + 1;
+    }
 }

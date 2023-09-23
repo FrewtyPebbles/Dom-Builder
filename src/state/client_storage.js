@@ -1,22 +1,24 @@
-import { DEV_BODY, DEV_SCRIPT_EDITOR, DEV_STYLE_EDITOR, DEV_STYLE_EDITOR_ANIMATION } from "./elements.js"
-import { change_content_editable } from "../utility.js"
+import _DEV from "./gui_elements.js"
+
+import SELECTED_ELEMENT from "./selected_element.js"
 
 import * as Types from "../types.js"
 import { dev_focused } from "../utility.js"
+import DEV from "./gui.js"
 
 /** @type {Types.ClientStorage} */
-export var client_storage = {
-    body: DEV_BODY,
-    style: DEV_STYLE_EDITOR,
-    animation: DEV_STYLE_EDITOR_ANIMATION,
-    script: DEV_SCRIPT_EDITOR,
+const CLIENT_STORAGE = {
+    body: _DEV.body,
+    style: _DEV.style.editor.style,
+    animation: _DEV.style.editor.animation,
+    script: _DEV.script.editor,
     clipboard: {
         element: null,
         copy() {
-            if (!selected_element.selected) return
+            if (!SELECTED_ELEMENT.selected) return
             if (dev_focused()) return
             /** @type {HTMLElement} */
-            let coppied_element = selected_element.element.cloneNode(true)
+            let coppied_element = SELECTED_ELEMENT.element.cloneNode(true)
             coppied_element.setAttribute( "class",
                 coppied_element.getAttribute("class").replace(RegExp([
                     "dev-selected",
@@ -31,14 +33,15 @@ export var client_storage = {
             this.element = coppied_element
         },
         paste() {
-            if (!selected_element.selected) return
+            if (!SELECTED_ELEMENT.selected) return
             if (dev_focused()) return
-            selected_element.unhover()
-            selected_element.element.appendChild(this.element.cloneNode(true))
+            SELECTED_ELEMENT.unhover()
+            SELECTED_ELEMENT.element.appendChild(this.element.cloneNode(true))
+            CLIENT_STORAGE.history.push()
         }
     },
     history: {
-        data:[DEV_BODY.cloneNode(true)],
+        data:[_DEV.body.cloneNode(true)],
         current_index:0,
         current(){
             return this.data[this.current_index].cloneNode(true)
@@ -47,7 +50,7 @@ export var client_storage = {
             this.current_index++;
 
             let fragment = new DocumentFragment()
-            let new_state = DEV_BODY.cloneNode(true)
+            let new_state = _DEV.body.cloneNode(true)
             fragment.append(new_state)
             fragment
             .querySelectorAll(":is(.dev-selected, .dev-hover-center, .dev-hover-top, .dev-hover-left, .dev-hover-bottom, .dev-hover-right)")
@@ -66,14 +69,14 @@ export var client_storage = {
         undo() {
             if (this.current_index === 0) {return}
             this.current_index--
-            DEV_BODY.innerHTML = ""
-            DEV_BODY.append(...this.current().childNodes)
+            _DEV.body.innerHTML = ""
+            _DEV.body.append(...this.current().childNodes)
         },
         redo() {
             if (this.current_index === this.data.length-1) {return}
             this.current_index++
-            DEV_BODY.innerHTML = ""
-            DEV_BODY.append(...this.current().childNodes)
+            _DEV.body.innerHTML = ""
+            _DEV.body.append(...this.current().childNodes)
         }
     },
     save() {
@@ -95,50 +98,36 @@ export var client_storage = {
         this.style.value = style
         this.animation.value = animation
         this.script.value = script
+        DEV.style.render()
+    },
+    async export() {
+        let body = this.body.innerHTML;
+        let script = this.script.value
+        let css = this.style.value.replace(/\r\n/g, "")
+        let css_animation = this.animation.value.replace(/\r\n/g, "")
+        let doc = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>${DEV.bar.title.value}</title>
+        </head>
+        <body>
+            <script>
+                ${script}
+            </script>
+            <style>
+                ${css_animation}
+                ${css}
+            </style>
+            ${body}
+        </body>
+        </html>`;
+        const handle = await showSaveFilePicker();
+        const writable = await handle.createWritable();
+        await writable.write( doc );
+        writable.close();
     }
 }
-
-
-/** @type {Types.SelectedElement} */
-export var selected_element = {
-    element: DEV_BODY,
-    selected: false,
-    drag_start_element: DEV_BODY,
-    hovered_element: DEV_BODY,
-    _select(element) {
-        if (element === this.element) return false;
-        this._deselect()
-        this.element = element
-        this.selected = true
-        this.element?.classList.add('dev-selected')
-        return true
-    },
-    select(element) {
-        this._select(element)
-    },
-    _deselect() {
-        this.element?.classList.remove('dev-selected')
-        change_content_editable(this.element, false)
-        this.selected = false
-    },
-    deselect() {
-        this._deselect()
-    },
-    unhover() {
-        [
-            "center",
-            "top",
-            "bottom",
-            "left",
-            "right"
-        ].forEach(pos => {
-            while (this.hovered_element?.classList.contains(`dev-hover-${pos}`)) {
-                this.hovered_element?.classList.remove(`dev-hover-${pos}`)
-            }
-        })
-    }
-}
-
-selected_element.hovered_element.addEventListener("mouseleave", e => {
-    selected_element.unhover()
-})
+export default CLIENT_STORAGE
