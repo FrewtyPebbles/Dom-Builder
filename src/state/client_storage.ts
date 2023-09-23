@@ -6,7 +6,6 @@ import * as Types from "#types"
 import { dev_focused } from "#utility"
 import DEV from "./gui"
 
-/** @type {Types.ClientStorage} */
 const CLIENT_STORAGE: Types.ClientStorage = {
     body: _DEV.body,
     style: _DEV.style.editor.style,
