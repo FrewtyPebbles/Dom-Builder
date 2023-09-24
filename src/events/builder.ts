@@ -9,16 +9,18 @@ import * as Types from "#types"
 
 // Bar
 
-DEV.bar.element.addEventListener("change", e => {
-    if (DEV.bar.element.getAttribute("value") === "Elements") return
+DEV.bar.element.addEventListener("keyup", (e) => {
+    if (e.key === "Enter" || e.keyCode === 13) {
+        console.log((e.target as HTMLInputElement).value);
+        if (DEV.bar.element.getAttribute("value") === "Elements") return
+        let new_node = document.createElement((e.target as HTMLInputElement).value)
+        SELECTED_ELEMENT.element.appendChild(new_node)
+        SELECTED_ELEMENT.select(new_node)
 
-    let new_node = document.createElement(DEV.bar.element.getAttribute("value"))
-    SELECTED_ELEMENT.element.appendChild(new_node)
-    SELECTED_ELEMENT.select(new_node)
+        CLIENT_STORAGE.history.push()
 
-    CLIENT_STORAGE.history.push()
-
-    DEV.bar.element.setAttribute("value", "Elements")
+        //DEV.bar.element.setAttribute("value", "Elements")
+    }
 })
 
 DEV.bar.delete.addEventListener("click", e => SELECTED_ELEMENT.remove())
@@ -67,25 +69,25 @@ DEV.style.close.addEventListener("click", e => {
 // classes
 DEV.properties.classes.addEventListener("input", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.className = `dev-selected ${DEV.properties.classes.getAttribute("value")}`
+    SELECTED_ELEMENT.element.className = `dev-selected ${(e.target as HTMLInputElement).value}`
 })
 
 // id
 DEV.properties.id.addEventListener("input", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.id = DEV.properties.id.getAttribute("value")
+    SELECTED_ELEMENT.element.id = (e.target as HTMLInputElement).value
 })
 
 // position
 DEV.properties.position.addEventListener("change", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.style.position = DEV.properties.position.getAttribute("value")
+    SELECTED_ELEMENT.element.style.position = (e.target as HTMLInputElement).value
 })
 
 // display
 DEV.properties.display.addEventListener("change", e => {
     if (SELECTED_ELEMENT.element === DEV.body) return;
-    SELECTED_ELEMENT.element.style.display = DEV.properties.display.getAttribute("value")
+    SELECTED_ELEMENT.element.style.display = (e.target as HTMLInputElement).value
 })
 
 // close

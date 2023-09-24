@@ -18,7 +18,8 @@
     <div id="dev-root">
         <nav id="dev-bar">
             <!-- Bar -->
-            <select name="Element" id="dev-bar-element">
+            <input list="dev-bar-element-datalist" type="text" id="dev-bar-element" name="Element" />
+            <datalist id="dev-bar-element-datalist">
                 <option selected disabled>Elements</option>
                 <option value="h1">h1</option>
                 <option value="h2">h2</option>
@@ -33,7 +34,7 @@
                 <option value="input">input</option>
                 <option value="textarea">textarea</option>
                 <option value="button">button</option>
-            </select>
+            </datalist>
             <Button id="dev-bar-button-properties">properties</Button>
             <Button id="dev-bar-button-italic">Italic</Button>
             <Button id="dev-bar-button-bold">Bold</Button>

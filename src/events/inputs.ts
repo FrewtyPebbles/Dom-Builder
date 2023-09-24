@@ -1,6 +1,6 @@
 import DEV from "#state/gui"
 
-import { change_content_editable, get_drop_position, as_bool, as_string } from "#utility"
+import { change_content_editable, get_drop_position, as_bool, as_string, dev_focused } from "#utility"
 
 import CLIENT_STORAGE from "#state/client_storage"
 import SELECTED_ELEMENT from "#state/selected_element"
@@ -105,10 +105,12 @@ document.addEventListener('mouseup', e => {
 })
 
 document.addEventListener("copy", e => {
+    if (as_bool(SELECTED_ELEMENT.element.contentEditable)) return
     CLIENT_STORAGE.clipboard.copy()
 })
 
 document.addEventListener("paste", e => {
+    if (as_bool(SELECTED_ELEMENT.element.contentEditable)) return
     CLIENT_STORAGE.clipboard.paste()
     CLIENT_STORAGE.history.push()
 })
@@ -120,5 +122,10 @@ document.addEventListener("keydown", e => {
     }
     else if (e.key === "z" && e.ctrlKey) { // Undo
         CLIENT_STORAGE.history.undo()
+    }
+    else if (e.key === "Delete") { // Delete
+        if (dev_focused()) return
+        SELECTED_ELEMENT.remove()
+        CLIENT_STORAGE.history.push()
     }
 })

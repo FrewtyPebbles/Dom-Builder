@@ -6,6 +6,9 @@ import {EditorState, StateEffect} from "@codemirror/state"
 import {css} from "@codemirror/lang-css"
 import DEV from "./gui"
 
+// TODO: Fix copying of elements when in CSS editor.
+// TODO: Add way to navigate parent and child elements that isnt via padding.
+// TODO: Make all content not editable other than input type elements on export.
 
 const _DEV = {
     body: document.getElementById('dev-body'),
