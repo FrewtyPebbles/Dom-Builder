@@ -21,19 +21,20 @@
             <input list="dev-bar-element-datalist" type="text" id="dev-bar-element" name="Element" />
             <datalist id="dev-bar-element-datalist">
                 <option selected disabled>Elements</option>
-                <option value="h1">h1</option>
-                <option value="h2">h2</option>
-                <option value="h3">h3</option>
-                <option value="h4">h4</option>
-                <option value="p">p</option>
-                <option value="div">div</option>
-                <option value="ul">ul</option>
-                <option value="ol">ol</option>
-                <option value="li">li</option>
-                <option value="a">a</option>
-                <option value="input">input</option>
-                <option value="textarea">textarea</option>
-                <option value="button">button</option>
+                <option value="h1">Main Header</option>
+                <option value="h2">Secondary Header</option>
+                <option value="h3">Sub Header</option>
+                <option value="h4">Mini Header</option>
+                <option value="p">Paragraph</option>
+                <option value="div">Section</option>
+                <option value="ul">Bulleted List</option>
+                <option value="ol">Numbered List</option>
+                <option value="li">List Item</option>
+                <option value="a">Link</option>
+                <option value="input">Text Input Field</option>
+                <option value="textarea">Text Box Input Field</option>
+                <option value="button">Button</option>
+                <option value="img">Image</option>
             </datalist>
             <Button id="dev-bar-button-properties">properties</Button>
             <Button id="dev-bar-button-italic">Italic</Button>
@@ -101,9 +102,13 @@
         </div>
     </div>
     <div id="dev-style" class="dev-editor">
-        <div>
+        <div class="dev-editor-title">
             <h3>CSS</h3>
             <button id="dev-style-close">X</button>
+        </div>
+        <div class="dev-editor-pages">
+            <button id="dev-editor-style-button">Styles</button>
+            <button id="dev-editor-animation-button">Animation</button>
         </div>
         <div id="dev-style-editor-animation" class="dev-style-anim dev-editor-input dev-prevent-control">
             <!-- editor -->
@@ -113,7 +118,7 @@
         </div>
     </div>
     <div id="dev-script" class="dev-editor">
-        <div>
+        <div class="dev-editor-title">
             <h3>Java Script</h3>
             <button id="dev-script-close">X</button>
         </div>

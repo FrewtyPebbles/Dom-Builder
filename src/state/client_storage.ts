@@ -5,6 +5,20 @@ import SELECTED_ELEMENT from "./selected_element"
 import * as Types from "#types"
 import { dev_focused } from "#utility"
 import DEV from "./gui"
+import Asset from "./classes/Asset"
+import * as JSZip from "jszip"
+
+/**
+ * TODO : Create a History class that can store the previous body state
+ *        and the assets data array.
+ * 
+ * TODO : Figure out a way to save data that isnt via local storage
+ *        because it is not effective at storing images.  Consider
+ *        writing a proprietary save file format that can save both
+ *        html and image data together.
+ * 
+ * TODO : Move all the TODOs to a dedicated TODO file.
+ */
 
 const CLIENT_STORAGE: Types.ClientStorage = {
     body: _DEV.body,
@@ -79,6 +93,30 @@ const CLIENT_STORAGE: Types.ClientStorage = {
             _DEV.body.append(...this.current().childNodes)
         }
     },
+    assets: {
+        data: [],
+        mutation_observer: new MutationObserver((mutation_list, observer) => {
+            // TODO: watch element to see when deleted then remove it from this.data
+            for (let mutation_record of mutation_list) {
+                if (mutation_record.removedNodes) {
+                    for (let removed_node of mutation_record.removedNodes) {
+                        let remove_index = 0;
+                        if (CLIENT_STORAGE.assets.data.every((current_asset, index) => {
+                            remove_index = index;
+                            return current_asset.element.isSameNode(removed_node);
+                        })) {
+                            CLIENT_STORAGE.assets.data.splice(remove_index, 1);
+                        }
+                    }
+                }
+            }
+        }),
+        push(element: HTMLElement) {
+            this.mutation_observer.observe(element.parentElement, { attributes: true, childList: true, subtree: true })
+            this.data.push(new Asset(element))
+        },
+
+    },
     save() {
         //Save progress
         window.localStorage.setItem("body", this.body.innerHTML)
@@ -117,12 +155,25 @@ const CLIENT_STORAGE: Types.ClientStorage = {
             }
         })
         DEV.style.render()
+        this.history.push()
     },
     async export() {
+        document.querySelectorAll("#dev-body *[contenteditable]").forEach(function(el){
+            el.removeAttribute("contenteditable");
+        })
+
+        // Prep assets for export
+        CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
+            asset.export_prep();
+            console.log(asset);
+        });
+
         let body = this.body.innerHTML;
         let script = this.script.state.doc.toString()
         let css = this.style.state.doc.toString().replace(/\r\n/g, "")
         let css_animation = this.animation.state.doc.toString().replace(/\r\n/g, "")
+
+        // DOC
         let doc = `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -142,10 +193,34 @@ const CLIENT_STORAGE: Types.ClientStorage = {
             </style>
         </body>
         </html>`;
-        const handle = await showSaveFilePicker();
+
+        const zip = new JSZip();
+
+        zip.folder("assets")
+        
+        CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
+            zip.file(`assets/${asset.name}`, asset.file)
+        });
+
+        zip.file(`index.html`, doc)
+
+        let content = await zip.generateAsync({ type: 'blob' })
+
+        const handle = await showSaveFilePicker({types:[
+            {
+                accept: {
+                    "application/zip":[".zip"]
+                }
+            }
+        ]});
         const writable = await handle.createWritable();
-        await writable.write( doc );
+        await writable.write( content );
         writable.close();
+
+        // unprep assets for export
+        CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
+            asset.dev_prep()
+        });
     }
 }
 export default CLIENT_STORAGE

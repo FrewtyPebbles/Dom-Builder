@@ -16,9 +16,9 @@ npm run build
 
  - Copying and pasting dom elements visually makes it easier to componentize parts of your website.
 
- - Robust undo and redo with *ctrl + z* and *ctrl + shift + z*.
+ - Robust undo and redo with *ctrl + z* and *ctrl + y*.
 
- - Exporting to an html file.
+ - Exports to a zip file containing an HTML file and an assets folder containing all assets used in your project.
 
  - [Code Mirror 6](https://codemirror.net/) Javascript and CSS editor
 
@@ -33,3 +33,11 @@ npm run build
  - Dynamic element attribute assignment editor
 
  - In need of a visual update
+
+ - Support for assets other than images (such as video files, etc.)
+
+## Potential Far Future Updates
+
+ - Multiple page support
+
+ - `<template>` editor

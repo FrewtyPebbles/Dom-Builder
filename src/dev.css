@@ -45,9 +45,10 @@
     flex-grow: 1;
     min-height: 100%;
     height: fit-content;
+    width: 0;
 }
 
-#dev-body * {
+#dev-body:hover * {
     padding: 3px;
 }
 #dev-bar {
@@ -59,6 +60,7 @@
 /* CODE EDITORS */
 .dev-editor {
     display: none;
+    flex-direction: column;
     overflow-y: none;
     overflow-x: none;
     position: fixed;
@@ -69,16 +71,17 @@
     background-color: black;
 }
 
-.dev-editor div.dev {
+/* .dev-editor div.dev {
     height: 90%;
     max-height: fit-content;
     width: 100%;
-}
+} */
 div.dev-style-anim {
-    height: 20%;
+    flex-grow: 1;
+    display: none;
 }
 div.dev-style-main {
-    height: 60%;
+    flex-grow: 1;
 }
 
 .dev-editor  h3 {
@@ -86,18 +89,24 @@ div.dev-style-main {
     display: inline-block;
     margin: 0;
 }
-.dev-editor > div {
+.dev-editor-title {
     display:flex;
     justify-content: space-between;
 }
+.dev-editor-pages {
+    display:flex;
+}
+
 .dev-editor-input, .CodeMirror {
     display: block;
     background-color: white;
     color: black;
-    height: 100%;
-    width: calc(100%);
+    flex-grow: 1;
+    width: calc(100% - 4px);
     tab-size: 30px;
     resize: none;
+    overflow-y: auto;
+    border: 2px solid black;
 }
 
 #dev-properties {
@@ -109,4 +118,9 @@ div.dev-style-main {
 
 .cm-editor {
     width: 100%;
+}
+
+img {
+    user-select: none;
+    -webkit-user-drag: none;
 }

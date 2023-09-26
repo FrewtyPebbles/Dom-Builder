@@ -9,13 +9,19 @@ import SELECTED_ELEMENT from "#state/selected_element"
 
 // Mouse Down - Get start position of element drag
 document.addEventListener('mousedown', e => {
-    let over_element = document.elementFromPoint(e.clientX, e.clientY)
+    let over_element: Element | HTMLElement = document.elementFromPoint(e.clientX, e.clientY)
     if (over_element.getAttribute('contenteditable') === as_string(true)) return;
     if (!DEV.body.contains(over_element)) return;
     if (SELECTED_ELEMENT.element.contains(over_element) && SELECTED_ELEMENT.element.contentEditable === as_string(true)) return;
+    // if shift key pressed while clicking select the selected element's parent
+    if (e.shiftKey) {
+        over_element = SELECTED_ELEMENT.select_parent()
+    }
+    else {
+        //select the element
+        SELECTED_ELEMENT.select(over_element)
+    }
     
-    //select the element
-    SELECTED_ELEMENT.select(over_element)
     
     if (SELECTED_ELEMENT.element.contentEditable === as_string(true)) return;
     
@@ -57,8 +63,6 @@ document.addEventListener('mouseup', e => {
     // guard against appending to selected element
     if (over_element === SELECTED_ELEMENT.element || SELECTED_ELEMENT.selected === false) return;
     // guard against moving into element inside selected element
-    //console.log(SELECTED_ELEMENT);
-    //console.log(SELECTED_ELEMENT.element.contains(over_element));
     if (SELECTED_ELEMENT.element.contains(over_element)) return;
     // guard against dragging out of dev body
     if (!DEV.body.contains(over_element)) return;
@@ -66,13 +70,14 @@ document.addEventListener('mouseup', e => {
     if (SELECTED_ELEMENT.element !== SELECTED_ELEMENT.drag_start_element) return;
     // guard against moving while editing content
     if (SELECTED_ELEMENT.element.contentEditable === as_string(true)) return;
+
     
     // Get placement position
     let drop_position = get_drop_position(over_element, e.clientX, e.clientY)
     // End Get placement position
 
     // apend to the element it was dragged to
-    let moved_element = SELECTED_ELEMENT.element.cloneNode(true)
+    let moved_element = SELECTED_ELEMENT.element//.cloneNode(true)
     
 
     // Place Element
@@ -97,7 +102,7 @@ document.addEventListener('mouseup', e => {
             over_element.insertAdjacentElement("beforeend", moved_element as Element)
             break;
     }
-    SELECTED_ELEMENT.element.remove()
+    //SELECTED_ELEMENT.element.remove()
     SELECTED_ELEMENT.element = DEV.body
     
     // End Place Element
@@ -117,7 +122,7 @@ document.addEventListener("paste", e => {
 
 // Keyboard Input
 document.addEventListener("keydown", e => {
-    if (e.key === "Z" && e.ctrlKey) { // Redo
+    if (e.key === "y" && e.ctrlKey) { // Redo
         CLIENT_STORAGE.history.redo()
     }
     else if (e.key === "z" && e.ctrlKey) { // Undo

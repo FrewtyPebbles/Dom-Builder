@@ -46,14 +46,40 @@ export function change_content_editable(node:HTMLElement | Element, editable:boo
 }
 
 export function get_drop_position(over_element:Element, mousex:number, mousey:number): string {
-    if (over_element.childNodes.length <= 0) return "center";
+    if (over_element.childNodes.length <= 0 && !([
+        "IMG",
+        "INPUT",
+        "AREA",
+        "BASE",
+        "BR",
+        "COL",
+        "EMBED",
+        "HR",
+        "SOURCE",
+        "TRACK",
+        "WBR"
+    ] as string[]).includes(over_element.tagName))
+        return "center";// if the element has no notes and is not one of these tags return "center"
     let rect = over_element.getBoundingClientRect()
     let mouse_pos = {x:mousex, y:mousey}
     let local_mouse_pos = {x:mouse_pos.x-rect.x, y:mouse_pos.y-rect.y}
     
-    if (local_mouse_pos.y < 5) return "top";
-    if (local_mouse_pos.y > rect.height - 5) return "bottom";
-    if (local_mouse_pos.x > rect.width - 5) return "right";
-    if (local_mouse_pos.x < 5) return "left";
-    return "center";
+    if (local_mouse_pos.y < 10) return "top";
+    if (local_mouse_pos.y > rect.height - 10) return "bottom";
+    if (local_mouse_pos.x > rect.width - 10) return "right";
+    if (local_mouse_pos.x < 10) return "left";
+    if (!([
+        "IMG",
+        "INPUT",
+        "AREA",
+        "BASE",
+        "BR",
+        "COL",
+        "EMBED",
+        "HR",
+        "SOURCE",
+        "TRACK",
+        "WBR"
+    ] as string[]).includes(over_element.tagName)) return "center";
+    return "bottom"; // this guard avoids placing children in void elements
 }

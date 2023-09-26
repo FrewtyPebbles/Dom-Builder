@@ -25,6 +25,8 @@
   "dependencies": {
     "@codemirror/lang-css": "^6.2.1",
     "@codemirror/lang-javascript": "^6.2.1",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "ncp": "^2.0.0"
   }
 }

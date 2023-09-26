@@ -9,6 +9,7 @@ import DEV from "./gui"
 // TODO: Fix copying of elements when in CSS editor.
 // TODO: Add way to navigate parent and child elements that isnt via padding.
 // TODO: Make all content not editable other than input type elements on export.
+// TODO: Add an indicator to let the user know when it is saving, loading, exporting, etc.
 
 const _DEV = {
     body: document.getElementById('dev-body'),
@@ -34,6 +35,8 @@ const _DEV = {
         id: document.getElementById('dev-properties-id'),
         position: document.getElementById("dev-properties-position"),
         display: document.getElementById("dev-properties-display"),
+        /** The dynamic properties containing div. */
+        dynamic: document.getElementById("dev-properties-settings-root")
     },
     script: {
         root: document.getElementById('dev-script'),
@@ -75,6 +78,7 @@ const _DEV = {
                 ],
                 parent: document.getElementById("dev-style-editor")
               }),
+            style_button: document.getElementById("dev-editor-style-button"),
             animation: new EditorView({ // Animation Editor
                 doc:"/* Keyframe Animations go here */",
                 extensions: [
@@ -92,7 +96,8 @@ const _DEV = {
                 })
                 ],
                 parent: document.getElementById("dev-style-editor-animation")
-              })
+              }),
+          animation_button: document.getElementById("dev-editor-animation-button")
         },
         export: document.getElementById('dev-style-export')
     }

@@ -1,4 +1,4 @@
-import DEV from "#state/gui";
+import DEV, { CSSEditorPage } from "#state/gui";
 
 import CLIENT_STORAGE from "#state/client_storage";
 import SELECTED_ELEMENT from "#state/selected_element";
@@ -6,20 +6,27 @@ import SELECTED_ELEMENT from "#state/selected_element";
 import { array_remove_items } from "#utility";
 
 import * as Types from "#types"
+import Asset, { ASSET_TYPE_LIST } from "#state/classes/Asset";
 
 // Bar
 
 DEV.bar.element.addEventListener("keyup", (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
-        console.log((e.target as HTMLInputElement).value);
         if (DEV.bar.element.getAttribute("value") === "Elements") return
+
         let new_node = document.createElement((e.target as HTMLInputElement).value)
+
+
         SELECTED_ELEMENT.element.appendChild(new_node)
+
+        if (ASSET_TYPE_LIST.includes((e.target as HTMLInputElement).value)) {
+            CLIENT_STORAGE.assets.push(new_node)
+        }
+
         SELECTED_ELEMENT.select(new_node)
 
         CLIENT_STORAGE.history.push()
 
-        //DEV.bar.element.setAttribute("value", "Elements")
     }
 })
 
@@ -29,12 +36,12 @@ DEV.bar.export.addEventListener("click", async e => await CLIENT_STORAGE.export(
 
 // Js Handler
 DEV.bar.js.addEventListener("click", e => {
-    DEV.script.root.style.display = "block";
+    DEV.script.root.style.display = "flex";
 })
 
 // css Handler
 DEV.bar.css.addEventListener("click", e => {
-    DEV.style.root.style.display = "block";
+    DEV.style.root.style.display = "flex";
 })
 
 // properties Handler
@@ -62,6 +69,16 @@ DEV.script.close.addEventListener("click", e => {
 // css CLOSE Handler
 DEV.style.close.addEventListener("click", e => {
     DEV.style.root.style.display = "none";
+})
+
+// editor style button
+DEV.style.editor.style_button.addEventListener("click", e => {
+    DEV.style.switch_editor(CSSEditorPage.style)
+})
+
+// editor animation button
+DEV.style.editor.animation_button.addEventListener("click", e => {
+    DEV.style.switch_editor(CSSEditorPage.animation)
 })
 
 // Properties

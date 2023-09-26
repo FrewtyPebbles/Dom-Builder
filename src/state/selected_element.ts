@@ -12,7 +12,7 @@ const SELECTED_ELEMENT: Types.SelectedElement = {
     selected: false,
     drag_start_element: _DEV.body,
     hovered_element: _DEV.body,
-    select(element) {
+    select(element:HTMLElement | Element | null) {
         if (element === this.element) return false;
         this.deselect()
         this.element = element
@@ -45,12 +45,16 @@ const SELECTED_ELEMENT: Types.SelectedElement = {
     remove() {
         if (this.element === DEV.body) return;
 
-
         let parent = this.element.parentElement
         this.element.remove()
         this.select(parent)
 
         CLIENT_STORAGE.history.push()
+    },
+    select_parent() {
+        if (this.element.parentElement === DEV.body || !DEV.body.contains(this.element)) return this.element;
+        this.select(this.element.parentElement)
+        return this.element.parentElement
     }
 }
 
