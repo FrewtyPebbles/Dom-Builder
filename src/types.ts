@@ -34,10 +34,6 @@ export interface Assets {
 export interface ClientStorage {
 	clipboard: Clipboard;
 	history: HistorySection;
-	body: HTMLElement | null;
-	style: EditorView | null;
-	animation: EditorView | null;
-	script: EditorView | null;
 	assets: Assets;
 	save(): void;
 	load(): void;

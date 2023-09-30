@@ -21,10 +21,6 @@ import History from "./classes/History"
  */
 
 const CLIENT_STORAGE: Types.ClientStorage = {
-    body: _DEV.body,
-    style: _DEV.style.editor.style,
-    animation: _DEV.style.editor.animation,
-    script: _DEV.script.editor,
     clipboard: {
         element_reference: null,
         element: null,
@@ -92,29 +88,31 @@ const CLIENT_STORAGE: Types.ClientStorage = {
             CLIENT_STORAGE.history.push()
         },
         find_from_dev_src(src:string) {
-            let ret_asset = null;
-            (this.data as Asset[]).every((asset) => {
-                ret_asset = asset
+            let ret_asset = (this.data as Asset[]).find((asset) => {
                 return asset.development_src === src;
             })
+            console.log("find_from_dev_src:");
+            console.log(src);
+            console.log(ret_asset);
             return ret_asset
         },
         find_from_export_src(src:string) {
-            let ret_asset = null;
-            (this.data as Asset[]).every((asset) => {
-                ret_asset = asset
+            let ret_asset = (this.data as Asset[]).find((asset) => {
                 return asset.export_src === src;
             })
+            console.log("find_from_export_src:");
+            console.log(src);
+            console.log(ret_asset);
             return ret_asset
         }
 
     },
     save() {
         //Save progress
-        window.localStorage.setItem("body", this.body.innerHTML)
-        window.localStorage.setItem("style", this.style.state.doc.toString())
-        window.localStorage.setItem("animation", this.animation.state.doc.toString())
-        window.localStorage.setItem("script", this.script.state.doc.toString())
+        window.localStorage.setItem("body", DEV.body.innerHTML)
+        window.localStorage.setItem("style", DEV.style.editor.style.state.doc.toString())
+        window.localStorage.setItem("animation", DEV.style.editor.animation.state.doc.toString())
+        window.localStorage.setItem("script", DEV.script.editor.state.doc.toString())
     },
     load() {
         let storage = window.localStorage
@@ -124,25 +122,25 @@ const CLIENT_STORAGE: Types.ClientStorage = {
         let animation = storage.getItem("animation")
         let script = storage.getItem("script")
 
-        this.body.innerHTML = body
-        this.style.dispatch({
+        DEV.body.innerHTML = body
+        DEV.style.editor.style.dispatch({
             changes: {
                 from: 0,
-                to: this.style.state.doc.length,
+                to: DEV.style.editor.style.state.doc.length,
                 insert: style
             }
         })
-        this.animation.dispatch({
+        DEV.style.editor.animation.dispatch({
             changes: {
                 from: 0,
-                to: this.animation.state.doc.length,
+                to: DEV.style.editor.animation.state.doc.length,
                 insert: animation
             }
         })
-        this.script.dispatch({
+        DEV.script.editor.dispatch({
             changes: {
                 from: 0,
-                to: this.script.state.doc.length,
+                to: DEV.script.editor.state.doc.length,
                 insert: script
             }
         })
@@ -150,22 +148,21 @@ const CLIENT_STORAGE: Types.ClientStorage = {
         this.history.push()
     },
     async export() {
-        document.querySelectorAll("#dev-body *[contenteditable]").forEach(function(el){
+        DEV.body.querySelectorAll("*[contenteditable]").forEach(function(el){
             el.removeAttribute("contenteditable");
         });
 
 
-        console.log(Array.from(DEV.body.querySelectorAll("img")));
         
         // Prep imgs for export
-        Array.from(DEV.body.querySelectorAll("img")).forEach((img: HTMLImageElement) => {
-            img.src = `assets/${CLIENT_STORAGE.assets.find_from_dev_src(img.src).file.name}`
+        DEV.body.querySelectorAll("img").forEach((img: HTMLImageElement) => {
+            img.src = CLIENT_STORAGE.assets.find_from_dev_src(img.getAttribute("src")).export_src
         });
 
-        let body = this.body.innerHTML;
-        let script = this.script.state.doc.toString()
-        let css = this.style.state.doc.toString().replace(/\r\n/g, "")
-        let css_animation = this.animation.state.doc.toString().replace(/\r\n/g, "")
+        let body = DEV.body.innerHTML;
+        let script = DEV.script.editor.state.doc.toString()
+        let css = DEV.style.editor.style.state.doc.toString().replace(/\r\n/g, "")
+        let css_animation = DEV.style.editor.animation.state.doc.toString().replace(/\r\n/g, "")
 
         // DOC
         let doc = `<!DOCTYPE html>
@@ -200,21 +197,24 @@ const CLIENT_STORAGE: Types.ClientStorage = {
 
         let content = await zip.generateAsync({ type: 'blob' })
 
-        const handle = await showSaveFilePicker({types:[
-            {
-                accept: {
-                    "application/zip":[".zip"]
+        try {
+            // open a save dialogue and write to it
+            const handle = await showSaveFilePicker({types:[
+                {
+                    accept: {
+                        "application/zip":[".zip"]
+                    }
                 }
-            }
-        ]});
-        const writable = await handle.createWritable();
-        await writable.write( content );
-        writable.close();
-
+            ]});
+            const writable = await handle.createWritable();
+            await writable.write( content );
+            await writable.close();
+        } catch {
+            // user cancels dialogue
+        }
         // unprep imgs for export
-        Array.from(DEV.body.querySelectorAll("img")).forEach((img: HTMLImageElement) => {
-            img.src = CLIENT_STORAGE.assets.find_from_export_src(img.src).development_src
-            console.log(img);
+        DEV.body.querySelectorAll("img").forEach((img: HTMLImageElement) => {
+            img.src = CLIENT_STORAGE.assets.find_from_export_src(img.getAttribute("src")).development_src
         });
     }
 }
