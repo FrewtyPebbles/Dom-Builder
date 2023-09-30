@@ -36,15 +36,16 @@
                 <option value="button">Button</option>
                 <option value="img">Image</option>
             </datalist>
-            <Button id="dev-bar-button-properties">properties</Button>
+            <Button id="dev-bar-button-properties">Properties</Button>
             <Button id="dev-bar-button-italic">Italic</Button>
             <Button id="dev-bar-button-bold">Bold</Button>
             <Button id="dev-bar-button-underline">Underline</Button>
             <Button id="dev-bar-button-delete">Delete</Button>
-            <Button id="dev-bar-button-css">css</Button>
-            <Button id="dev-bar-button-js">js</Button>
-            <Button id="dev-bar-button-save">save</Button>
-            <Button id="dev-bar-button-load">load</Button>
+            <Button id="dev-bar-button-css">Css</Button>
+            <Button id="dev-bar-button-js">Js</Button>
+            <Button id="dev-bar-button-assets">Assets</Button>
+            <Button id="dev-bar-button-save">Save</Button>
+            <Button id="dev-bar-button-load">Load</Button>
             <input class="dev-prevent-control" type="text" id="dev-bar-input-title" placeholder="Title">
             <Button id="dev-bar-button-export">EXPORT</Button>
         </nav>
@@ -124,6 +125,22 @@
         </div>
         <div id="dev-script-editor" class="dev-editor-input dev-prevent-control dev">
             <!-- editor -->
+        </div>
+    </div>
+    <div id="dev-assets" class="dev-editor">
+        <div class="dev-editor-title">
+            <h3>Assets</h3>
+            <button id="dev-assets-close">X</button>
+        </div>
+        <div id="dev-assets-editor">
+            <!-- assets manager -->
+            <div>
+                Upload an Asset:
+                <input placeholder="Name" name="upload_name" id="dev-assets-editor-upload-name">
+                <input type="file" name="upload_file" id="dev-assets-editor-upload">
+            </div>
+            <div id="dev-assets-editor-current-root">
+            </div>
         </div>
     </div>
     <style id="dev-style-export">

@@ -19,10 +19,6 @@ DEV.bar.element.addEventListener("keyup", (e) => {
 
         SELECTED_ELEMENT.element.appendChild(new_node)
 
-        if (ASSET_TYPE_LIST.includes((e.target as HTMLInputElement).value)) {
-            CLIENT_STORAGE.assets.push(new_node)
-        }
-
         SELECTED_ELEMENT.select(new_node)
 
         CLIENT_STORAGE.history.push()
@@ -42,6 +38,11 @@ DEV.bar.js.addEventListener("click", e => {
 // css Handler
 DEV.bar.css.addEventListener("click", e => {
     DEV.style.root.style.display = "flex";
+})
+
+// assets Handler
+DEV.bar.assets.addEventListener("click", e => {
+    DEV.assets.root.style.display = "flex";
 })
 
 // properties Handler
@@ -69,6 +70,19 @@ DEV.script.close.addEventListener("click", e => {
 // css CLOSE Handler
 DEV.style.close.addEventListener("click", e => {
     DEV.style.root.style.display = "none";
+})
+
+// assets CLOSE Handler
+DEV.assets.close.addEventListener("click", e => {
+    DEV.assets.root.style.display = "none";
+})
+
+// assets UPLOAD Handler
+DEV.assets.upload.addEventListener("change", e => {
+    CLIENT_STORAGE.assets.push(
+        (e.target as HTMLInputElement).files[0],
+        (DEV.assets.upload_name as HTMLInputElement).value
+    )
 })
 
 // editor style button

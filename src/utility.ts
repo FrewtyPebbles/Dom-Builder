@@ -2,8 +2,21 @@ import * as Types from "#types";
 
 import CLIENT_STORAGE from "#state/client_storage";
 import DEV from "#state/gui";
+import { ASSET_TYPE_LIST } from "#state/classes/Asset";
 
-
+export const VOID_TYPE_LIST = [
+    "IMG",
+    "INPUT",
+    "AREA",
+    "BASE",
+    "BR",
+    "COL",
+    "EMBED",
+    "HR",
+    "SOURCE",
+    "TRACK",
+    "WBR"
+];
 
 export function array_remove_items<T>(array: T[], items: T[]): T[] {
     for (const item of items) {
@@ -36,7 +49,7 @@ export function as_string(val:any):string {
 }
 
 export function change_content_editable(node:HTMLElement | Element, editable:boolean): void {
-
+    if (ASSET_TYPE_LIST.includes(node.tagName.toLowerCase())) return
     // Save the state if the content editable value is being changed
     if (editable !== as_bool((node as HTMLElement).contentEditable)) CLIENT_STORAGE.history.push();
     
@@ -46,19 +59,7 @@ export function change_content_editable(node:HTMLElement | Element, editable:boo
 }
 
 export function get_drop_position(over_element:Element, mousex:number, mousey:number): string {
-    if (over_element.childNodes.length <= 0 && !([
-        "IMG",
-        "INPUT",
-        "AREA",
-        "BASE",
-        "BR",
-        "COL",
-        "EMBED",
-        "HR",
-        "SOURCE",
-        "TRACK",
-        "WBR"
-    ] as string[]).includes(over_element.tagName))
+    if (over_element.childNodes.length <= 0 && !VOID_TYPE_LIST.includes(over_element.tagName))
         return "center";// if the element has no notes and is not one of these tags return "center"
     let rect = over_element.getBoundingClientRect()
     let mouse_pos = {x:mousex, y:mousey}
@@ -68,18 +69,6 @@ export function get_drop_position(over_element:Element, mousex:number, mousey:nu
     if (local_mouse_pos.y > rect.height - 10) return "bottom";
     if (local_mouse_pos.x > rect.width - 10) return "right";
     if (local_mouse_pos.x < 10) return "left";
-    if (!([
-        "IMG",
-        "INPUT",
-        "AREA",
-        "BASE",
-        "BR",
-        "COL",
-        "EMBED",
-        "HR",
-        "SOURCE",
-        "TRACK",
-        "WBR"
-    ] as string[]).includes(over_element.tagName)) return "center";
+    if (!VOID_TYPE_LIST.includes(over_element.tagName)) return "center";
     return "bottom"; // this guard avoids placing children in void elements
 }

@@ -1,18 +1,20 @@
 // TYPE DEFINITIONS
 
 import Asset from "#state/classes/Asset";
+import History from "#state/classes/History";
 import { EditorView } from "@codemirror/view";
 
 export interface Clipboard {
 	element: HTMLElement | null;
+	element_reference: HTMLElement | null;
 	copy(): void;
 	paste(): void;
 }
 
-export interface History {
-	data: Node[];
+export interface HistorySection {
+	data: History[];
 	current_index: number;
-	current(): Node;
+	current(): History;
 	push(): void;
 	undo(): void;
 	redo(): void;
@@ -20,8 +22,9 @@ export interface History {
 
 export interface Assets {
 	data: Asset[];
-	mutation_observer: MutationObserver;
-	push(element:HTMLElement): void;
+	push(file:File, name:string): void;
+	find_from_dev_src(src:string): Asset | null;
+	find_from_export_src(src:string): Asset | null;
 }
 
 
@@ -30,7 +33,7 @@ export interface Assets {
  */
 export interface ClientStorage {
 	clipboard: Clipboard;
-	history: History;
+	history: HistorySection;
 	body: HTMLElement | null;
 	style: EditorView | null;
 	animation: EditorView | null;

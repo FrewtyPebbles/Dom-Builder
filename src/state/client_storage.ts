@@ -5,12 +5,12 @@ import SELECTED_ELEMENT from "./selected_element"
 import * as Types from "#types"
 import { dev_focused } from "#utility"
 import DEV from "./gui"
-import Asset from "./classes/Asset"
+import Asset, { ASSET_TYPE_LIST } from "./classes/Asset"
 import * as JSZip from "jszip"
+import History from "./classes/History"
 
 /**
- * TODO : Create a History class that can store the previous body state
- *        and the assets data array.
+ * TODO : Decouple Assets from elements
  * 
  * TODO : Figure out a way to save data that isnt via local storage
  *        because it is not effective at storing images.  Consider
@@ -26,6 +26,7 @@ const CLIENT_STORAGE: Types.ClientStorage = {
     animation: _DEV.style.editor.animation,
     script: _DEV.script.editor,
     clipboard: {
+        element_reference: null,
         element: null,
         copy() {
             if (!SELECTED_ELEMENT.selected) return
@@ -34,87 +35,78 @@ const CLIENT_STORAGE: Types.ClientStorage = {
             coppied_element.setAttribute( "class",
                 coppied_element.getAttribute("class").replace(RegExp([
                     "dev-selected",
-                    "dev-hover",
                     "dev-hover-center",
                     "dev-hover-top",
                     "dev-hover-left",
                     "dev-hover-bottom",
-                    "dev-hover-right"
+                    "dev-hover-right",
+                    "dev-hover",
                 ].join("|"), "gm"),"")
             )
             this.element = coppied_element
+            this.element_reference = SELECTED_ELEMENT.element
         },
         paste() {
             if (!SELECTED_ELEMENT.selected) return
             if (dev_focused()) return
+            if (ASSET_TYPE_LIST.includes(SELECTED_ELEMENT.element.tagName.toLowerCase())) return
             SELECTED_ELEMENT.unhover()
+            let new_elem = this.element.cloneNode(true)
+
             SELECTED_ELEMENT.element.appendChild(this.element.cloneNode(true))
             CLIENT_STORAGE.history.push()
         }
     },
     history: {
-        data:[_DEV.body.cloneNode(true)],
+        data:[new History([])],
         current_index:0,
         current(){
-            return this.data[this.current_index].cloneNode(true)
+            return this.data[this.current_index]
         },
         push() {
             this.current_index++;
 
-            let fragment = new DocumentFragment()
-            let new_state = _DEV.body.cloneNode(true)
-            fragment.append(new_state)
-            fragment
-            .querySelectorAll(":is(.dev-selected, .dev-hover-center, .dev-hover-top, .dev-hover-left, .dev-hover-bottom, .dev-hover-right)")
-            .forEach(elem => {
-                elem.classList.remove("dev-selected")
-                elem.classList.remove("dev-hover-center")
-                elem.classList.remove("dev-hover-top")
-                elem.classList.remove("dev-hover-bottom")
-                elem.classList.remove("dev-hover-left")
-                elem.classList.remove("dev-hover-right")
-            })
+            this.data[this.current_index] = new History();
 
-            this.data[this.current_index] = fragment.childNodes[0].cloneNode(true)
-            this.data.length = this.current_index + 1
+            this.data.length = this.current_index + 1;
         },
         undo() {
             if (dev_focused()) return
             if (this.current_index === 0) {return}
             this.current_index--
-            _DEV.body.innerHTML = ""
-            _DEV.body.append(...this.current().childNodes)
+            this.current().apply()
         },
         redo() {
             if (dev_focused()) return
             if (this.current_index === this.data.length-1) {return}
             this.current_index++
-            _DEV.body.innerHTML = ""
-            _DEV.body.append(...this.current().childNodes)
+            this.current().apply()
         }
     },
     assets: {
         data: [],
-        mutation_observer: new MutationObserver((mutation_list, observer) => {
-            // TODO: watch element to see when deleted then remove it from this.data
-            for (let mutation_record of mutation_list) {
-                if (mutation_record.removedNodes) {
-                    for (let removed_node of mutation_record.removedNodes) {
-                        let remove_index = 0;
-                        if (CLIENT_STORAGE.assets.data.every((current_asset, index) => {
-                            remove_index = index;
-                            return current_asset.element.isSameNode(removed_node);
-                        })) {
-                            CLIENT_STORAGE.assets.data.splice(remove_index, 1);
-                        }
-                    }
-                }
-            }
-        }),
-        push(element: HTMLElement) {
-            this.mutation_observer.observe(element.parentElement, { attributes: true, childList: true, subtree: true })
-            this.data.push(new Asset(element))
+        push(file:File, name:string = "unnamed") {
+            let new_asset = new Asset(name, file)
+            DEV.assets.add_current(new_asset)
+            this.data.push(new_asset)
+            CLIENT_STORAGE.history.push()
         },
+        find_from_dev_src(src:string) {
+            let ret_asset = null;
+            (this.data as Asset[]).every((asset) => {
+                ret_asset = asset
+                return asset.development_src === src;
+            })
+            return ret_asset
+        },
+        find_from_export_src(src:string) {
+            let ret_asset = null;
+            (this.data as Asset[]).every((asset) => {
+                ret_asset = asset
+                return asset.export_src === src;
+            })
+            return ret_asset
+        }
 
     },
     save() {
@@ -160,12 +152,14 @@ const CLIENT_STORAGE: Types.ClientStorage = {
     async export() {
         document.querySelectorAll("#dev-body *[contenteditable]").forEach(function(el){
             el.removeAttribute("contenteditable");
-        })
+        });
 
-        // Prep assets for export
-        CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
-            asset.export_prep();
-            console.log(asset);
+
+        console.log(Array.from(DEV.body.querySelectorAll("img")));
+        
+        // Prep imgs for export
+        Array.from(DEV.body.querySelectorAll("img")).forEach((img: HTMLImageElement) => {
+            img.src = `assets/${CLIENT_STORAGE.assets.find_from_dev_src(img.src).file.name}`
         });
 
         let body = this.body.innerHTML;
@@ -199,7 +193,7 @@ const CLIENT_STORAGE: Types.ClientStorage = {
         zip.folder("assets")
         
         CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
-            zip.file(`assets/${asset.name}`, asset.file)
+            zip.file(`assets/${asset.file.name}`, asset.file)
         });
 
         zip.file(`index.html`, doc)
@@ -217,9 +211,10 @@ const CLIENT_STORAGE: Types.ClientStorage = {
         await writable.write( content );
         writable.close();
 
-        // unprep assets for export
-        CLIENT_STORAGE.assets.data.forEach((asset: Asset) => {
-            asset.dev_prep()
+        // unprep imgs for export
+        Array.from(DEV.body.querySelectorAll("img")).forEach((img: HTMLImageElement) => {
+            img.src = CLIENT_STORAGE.assets.find_from_export_src(img.src).development_src
+            console.log(img);
         });
     }
 }

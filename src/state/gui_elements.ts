@@ -23,6 +23,7 @@ const _DEV = {
         export: document.getElementById('dev-bar-button-export'),
         js: document.getElementById('dev-bar-button-js'),
         css: document.getElementById('dev-bar-button-css'),
+        assets: document.getElementById('dev-bar-button-assets'),
         title: document.getElementById('dev-bar-input-title'),
         properties: document.getElementById('dev-bar-button-properties'),
         save: document.getElementById('dev-bar-button-save'),
@@ -100,6 +101,13 @@ const _DEV = {
           animation_button: document.getElementById("dev-editor-animation-button")
         },
         export: document.getElementById('dev-style-export')
+    },
+    assets: {
+      root: document.getElementById('dev-assets'),
+      close: document.getElementById('dev-assets-close'),
+      upload_name: document.getElementById('dev-assets-editor-upload-name'),
+      upload: document.getElementById('dev-assets-editor-upload'),
+      current_root: document.getElementById('dev-assets-editor-current-root')
     }
 }
 

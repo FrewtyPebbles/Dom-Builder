@@ -6,6 +6,7 @@ import SELECTED_ELEMENT from "./selected_element"
 import { array_remove_items } from "#utility"
 import { EditorView } from "codemirror"
 import CLIENT_STORAGE from "./client_storage"
+import Asset from "./classes/Asset"
 
 
 const DEV = {
@@ -44,41 +45,51 @@ const DEV = {
             //dynamic properties
             switch (SELECTED_ELEMENT.element.tagName) {
                 case "IMG":
-                    this.add_dynamic_property("Image:", { tag: "input", type: "file" }, {
-                        event: "change",
-                        callback: (e:Event) => {
-                            window.URL.revokeObjectURL((SELECTED_ELEMENT.element as HTMLImageElement).src);
-                            (SELECTED_ELEMENT.element as HTMLImageElement).src = window.URL.createObjectURL((e.target as HTMLInputElement).files[0]);
-                            
-                            let asset = CLIENT_STORAGE.assets.data.find((item) => item.element === SELECTED_ELEMENT.element)
-                            asset.name = (e.target as HTMLInputElement).files[0].name
-                            asset.development_src = (SELECTED_ELEMENT.element as HTMLImageElement).src
-                            asset.file = (e.target as HTMLInputElement).files[0]
+                    this.add_dynamic_property("Image:", 
+                        `
+                        <div id="dev-properties-dynamic-image-root">
+                        </div>
+                        `,
+                        (element:HTMLElement) => {
+                            let root = element.querySelector("#dev-properties-dynamic-image-root");
+                            for (const asset of CLIENT_STORAGE.assets.data) {
+                                if (!asset.file.type.startsWith("image")) continue;
+                                let new_image = document.createElement("img");
+                                new_image.src = asset.development_src;
+                                new_image.addEventListener("click", ev => {
+                                    (SELECTED_ELEMENT.element as HTMLImageElement).src = asset.development_src
+                                })
+                                new_image.classList.add("dev-properties-dynamic-image-option")
+                                root.appendChild(new_image);
+                            }
                         }
-                    })
+                    )
+
+                    this.add_dynamic_property("Alt Text:", 
+                        `
+                        <input class="dev-properties-dynamic-property">
+                        `,
+                        (element:HTMLElement) => {
+                            element.querySelector("input").addEventListener("change", (ev:Event) => {
+                                (SELECTED_ELEMENT.element as HTMLImageElement).alt = (ev.target as HTMLInputElement).value;
+                            })
+                        }
+                    )
                     break;
             
                 default:
                     break;
             }
         },
-        add_dynamic_property(prefix:string, element:{ tag:string, type?:string }, event_callback: { event:string, callback:(event:Event)=>void }) {
+        /** Adds a property to the dynamic property section.  This is meant to be used one or more times per element tagname. */
+        add_dynamic_property(prefix:string, HTML:string, element_callback: (element:HTMLElement) => void) {
             let input_root = document.createElement("div");
             input_root.textContent = prefix
-            let input_element = document.createElement(element.tag);
-            switch (element.tag) {
-                case "input":
-                    (input_element as HTMLInputElement).type = element.type;
-                    break;
-            
-                default:
-                    break;
-            }
+            input_root.innerHTML += HTML
         
-            //upload file
-            input_element.addEventListener(event_callback.event, event_callback.callback);
-        
-            input_root.appendChild(input_element);
+            // Register any events here
+            element_callback(input_root);
+
             (DEV.properties.dynamic as HTMLElement).appendChild(input_root);
         }
     },
@@ -119,7 +130,36 @@ const DEV = {
             }
         }
     },
-    editor_focused: false
+    editor_focused: false,
+    assets: {
+        ..._DEV.assets,
+        add_current(asset:Asset) {
+            let root = (this.current_root as HTMLDivElement);
+            //create element layout
+            let asset_root = document.createElement("div");
+            asset_root.innerHTML = `
+                <img alt="asset display image"><span></span><button>Remove</button>
+            `;
+            asset_root.classList.add("dev-assets-editor-current-asset")
+
+            //get elements in layout
+            let remove_button = asset_root.querySelector("button")
+            let content_span = asset_root.querySelector("span")
+            let display_img = asset_root.querySelector("img")
+
+            remove_button.addEventListener("click", (ev) => {
+                CLIENT_STORAGE.assets.data = array_remove_items(CLIENT_STORAGE.assets.data, [asset])
+                asset_root.remove()
+                CLIENT_STORAGE.history.push()
+            })
+
+            display_img.src = asset.development_src
+
+            content_span.innerText = asset.name
+            
+            root.appendChild(asset_root)
+        }
+    }
 }
 
 export enum CSSEditorPage {

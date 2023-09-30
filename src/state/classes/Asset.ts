@@ -1,3 +1,4 @@
+import CLIENT_STORAGE from "#state/client_storage"
 
 export const ASSET_TYPE_LIST = [
 	"img",
@@ -8,22 +9,27 @@ export const ASSET_TYPE_LIST = [
 export default class Asset {
 	file: File
 	name: string
-	element: HTMLElement
 	development_src:string | ""
+	export_src:string | ""
 
-	constructor(element: HTMLElement, name:string = "", file:File = new File([],"")) {
+	constructor(name:string, file:File) {
 		this.file = file
 		this.name = name
-		this.element = element
-		if (Object.hasOwn(element, "src"))
-			this.development_src = (element as any).src
+
+		this.development_src = window.URL.createObjectURL(this.file);
+		this.export_src = `assets/${this.file.name}`
+
+		CLIENT_STORAGE.history.push();
 	}
 
-	export_prep() {
-		(this.element as any).src = `assets/${this.name}`;
-	}
-
-	dev_prep() {
-		(this.element as any).src = this.development_src;
+	update(name:string = "", file:File = new File([],"")) {
+		this.file = file;
+		this.name = name;
+		window.URL.revokeObjectURL(this.development_src);
+		
+		this.development_src = window.URL.createObjectURL(this.file);
+		this.export_src = `assets/${this.file.name}`
+		
+		CLIENT_STORAGE.history.push();
 	}
 }
